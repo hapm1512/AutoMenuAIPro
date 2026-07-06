@@ -1,0 +1,10 @@
+D:/Projects/AutoMenuAIPro/Build/CMakeFiles/AutoMenuAIPro.dir
+D:/Projects/AutoMenuAIPro/Build/CMakeFiles/AutoMenuAIPro_rc_lib.dir
+D:/Projects/AutoMenuAIPro/Build/CMakeFiles/INSTALL.dir
+D:/Projects/AutoMenuAIPro/Build/CMakeFiles/ALL_BUILD.dir
+D:/Projects/AutoMenuAIPro/Build/CMakeFiles/ZERO_CHECK.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/CMakeFiles/INSTALL.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/CMakeFiles/ALL_BUILD.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/modules/CMakeFiles/INSTALL.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/extras/Build/CMakeFiles/INSTALL.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/extras/Build/juceaide/CMakeFiles/INSTALL.dir

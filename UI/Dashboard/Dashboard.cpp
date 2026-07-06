@@ -3,63 +3,41 @@
 
 Dashboard::Dashboard()
 {
-    setSize(920, 560);
+    setSize (AppTheme::windowWidth, AppTheme::windowHeight);
+
+    addAndMakeVisible (header);
+    addAndMakeVisible (macroPanel);
+    addAndMakeVisible (mixerPanel);
+    addAndMakeVisible (toneDetector);
+    addAndMakeVisible (footer);
+    addAndMakeVisible (outputMeter);
 }
 
-void Dashboard::paint(juce::Graphics& g)
+void Dashboard::paint (juce::Graphics& g)
 {
-    g.fillAll(AppTheme::background());
-
-    drawPanel(g, headerArea, "HEADER");
-    drawPanel(g, macroArea, "PRESET / MACRO");
-    drawPanel(g, mixerArea, "MIX & EFFECT CONTROL");
-    drawPanel(g, toneArea, "AI TONE DETECTOR");
-    drawPanel(g, footerArea, "FOOTER");
-    drawPanel(g, meterArea, "OUTPUT LEVEL");
+    g.fillAll (AppTheme::background());
 }
 
 void Dashboard::resized()
 {
-    auto r = getLocalBounds().reduced(8);
+    auto r = getLocalBounds().reduced (8);
 
-    headerArea = r.removeFromTop(44);
+    header.setBounds (r.removeFromTop (50));
+    r.removeFromTop (8);
 
-    r.removeFromTop(8);
+    auto bottom = r.removeFromBottom (106);
+    r.removeFromBottom (8);
 
-    auto body = r.removeFromTop(390);
-    auto rightColumn = body.removeFromRight(260);
+    auto right = r.removeFromRight (310);
+    r.removeFromRight (8);
 
-    body.removeFromRight(8);
+    macroPanel.setBounds (r.removeFromTop (230));
+    r.removeFromTop (8);
+    mixerPanel.setBounds (r);
 
-    macroArea = body.removeFromTop(205);
-    body.removeFromTop(8);
-    mixerArea = body;
+    outputMeter.setBounds (bottom.removeFromRight (310));
+    bottom.removeFromRight (8);
+    footer.setBounds (bottom);
 
-    toneArea = rightColumn;
-
-    r.removeFromTop(8);
-
-    auto bottom = r;
-    meterArea = bottom.removeFromRight(260);
-    bottom.removeFromRight(8);
-    footerArea = bottom;
-}
-
-void Dashboard::drawPanel(
-    juce::Graphics& g,
-    juce::Rectangle<int> area,
-    const juce::String& title
-)
-{
-    auto bounds = area.toFloat();
-
-    g.setColour(AppTheme::panel());
-    g.fillRoundedRectangle(bounds, 10.0f);
-
-    g.setColour(AppTheme::border());
-    g.drawRoundedRectangle(bounds, 10.0f, 1.0f);
-
-    g.setColour(AppTheme::text());
-    g.setFont(juce::Font(15.0f, juce::Font::bold));
-    g.drawText(title, area.reduced(14, 10), juce::Justification::topLeft);
+    toneDetector.setBounds (right);
 }

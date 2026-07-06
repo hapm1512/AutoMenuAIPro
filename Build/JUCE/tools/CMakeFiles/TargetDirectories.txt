@@ -1,0 +1,7 @@
+D:/Projects/AutoMenuAIPro/Build/JUCE/tools/CMakeFiles/INSTALL.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/tools/CMakeFiles/ALL_BUILD.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/tools/CMakeFiles/ZERO_CHECK.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/tools/modules/CMakeFiles/INSTALL.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/tools/extras/Build/CMakeFiles/INSTALL.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/tools/extras/Build/juceaide/CMakeFiles/juceaide.dir
+D:/Projects/AutoMenuAIPro/Build/JUCE/tools/extras/Build/juceaide/CMakeFiles/INSTALL.dir

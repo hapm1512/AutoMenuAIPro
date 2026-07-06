@@ -3,12 +3,11 @@
 
 MainWindow::MainWindow()
     : DocumentWindow ("AutoMenuAIPro",
-                      AppTheme::background(),
-                      juce::DocumentWindow::closeButton)
+                      juce::Colour::fromRGB (31, 43, 48),
+                      DocumentWindow::minimiseButton | DocumentWindow::closeButton)
 {
     setUsingNativeTitleBar (false);
     setResizable (false, false);
-
     setContentOwned (new Dashboard(), true);
     centreWithSize (AppTheme::windowWidth, AppTheme::windowHeight);
     setVisible (true);

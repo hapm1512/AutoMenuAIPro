@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\App\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\App\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\App\MainWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Dashboard\Dashboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Theme\AppTheme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Header\HeaderComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Panels\MacroPanel\MacroPanelComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Panels\MixerPanel\MixerPanelComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Panels\TonePanel\ToneDetectorComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Panels\OutputMeterPanel\OutputMeterComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Footer\FooterComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_gui_extra\juce_gui_extra.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_gui_basics\juce_gui_basics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_gui_basics\juce_gui_basics_2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_gui_basics\juce_gui_basics_3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_gui_basics\juce_gui_basics_4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_gui_basics\juce_gui_basics_5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_graphics\juce_graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_graphics\juce_graphics_Harfbuzz.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_graphics\juce_graphics_Sheenbidi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_events\juce_events.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_core\juce_core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_core\juce_core_CompilationTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JUCE8\modules\juce_data_structures\juce_data_structures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Projects\AutoMenuAIPro\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="D:\Projects\AutoMenuAIPro\Build\AutoMenuAIPro_rc_lib.dir\$(Configuration)\AutoMenuAIPro_resources.res">
+      <Filter>Object Libraries</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Object Libraries">
+      <UniqueIdentifier>{59555BDC-0C18-3BD0-A99D-021CAA5E0A37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{09651EAF-D20A-3445-885B-37F2E9967037}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

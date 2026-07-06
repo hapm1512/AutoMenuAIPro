@@ -7,12 +7,7 @@ const juce::String AutoMenuAIProApplication::getApplicationName()
 
 const juce::String AutoMenuAIProApplication::getApplicationVersion()
 {
-    return "0.3.0";
-}
-
-bool AutoMenuAIProApplication::moreThanOneInstanceAllowed()
-{
-    return true;
+    return "0.4.0";
 }
 
 void AutoMenuAIProApplication::initialise (const juce::String&)
@@ -23,14 +18,4 @@ void AutoMenuAIProApplication::initialise (const juce::String&)
 void AutoMenuAIProApplication::shutdown()
 {
     mainWindow = nullptr;
-}
-
-void AutoMenuAIProApplication::systemRequestedQuit()
-{
-    quit();
-}
-
-void AutoMenuAIProApplication::anotherInstanceStarted (const juce::String&)
-{
-    // Sprint 03A: no multi-instance action yet.
 }

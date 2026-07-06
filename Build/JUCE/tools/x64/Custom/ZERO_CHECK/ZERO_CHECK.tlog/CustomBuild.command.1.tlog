@@ -1,0 +1,10 @@
+^D:\PROJECTS\AUTOMENUAIPRO\BUILD\JUCE\TOOLS\CMAKEFILES\1C05A71A26D7B8F59654420A424F880F\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/JUCE8 -BD:/Projects/AutoMenuAIPro/Build/JUCE/tools --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/Projects/AutoMenuAIPro/Build/JUCE/tools/JUCE.slnx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

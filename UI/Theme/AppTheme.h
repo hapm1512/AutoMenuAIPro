@@ -4,10 +4,11 @@
 
 namespace AppTheme
 {
-    static constexpr int windowWidth  = 920;
-    static constexpr int windowHeight = 560;
+    static constexpr int windowWidth  = 1120;
+    static constexpr int windowHeight = 640;
 
     juce::Colour background();
+    juce::Colour titleBar();
     juce::Colour panel();
     juce::Colour panelDark();
     juce::Colour border();
@@ -16,5 +17,7 @@ namespace AppTheme
     juce::Colour purple();
     juce::Colour blue();
     juce::Colour green();
+    juce::Colour yellow();
     juce::Colour red();
+    juce::Colour orange();
 }

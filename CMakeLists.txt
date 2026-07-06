@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AutoMenuAIPro VERSION 0.3.0 LANGUAGES CXX)
+project(AutoMenuAIPro VERSION 0.4.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# JUCE must point to the clean JUCE 8 root folder.
 set(JUCE_DIR "D:/JUCE8")
-
 add_subdirectory("${JUCE_DIR}" "${CMAKE_BINARY_DIR}/JUCE")
 
 juce_add_gui_app(AutoMenuAIPro
@@ -23,6 +21,7 @@ target_sources(AutoMenuAIPro PRIVATE
 
     UI/Dashboard/Dashboard.cpp
     UI/Theme/AppTheme.cpp
+
     UI/Header/HeaderComponent.cpp
     UI/Panels/MacroPanel/MacroPanelComponent.cpp
     UI/Panels/MixerPanel/MixerPanelComponent.cpp
