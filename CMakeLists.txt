@@ -19,6 +19,19 @@ target_sources(AutoMenuAIPro PRIVATE
     App/Application.cpp
     App/MainWindow.cpp
 
+    Core/CoreController.cpp
+
+    Audio/AudioEngine.cpp
+    Audio/AudioRingBuffer.cpp
+
+    Analysis/AnalysisEngine.cpp
+    Analysis/FFTProcessor.cpp
+    Analysis/PitchDetector.cpp
+    Analysis/KeyDetector.cpp
+    Analysis/BpmDetector.cpp
+
+    UI/Bridge/ToneAnalysisBridge.cpp
+
     UI/Dashboard/Dashboard.cpp
     UI/Theme/AppTheme.cpp
     UI/Settings/SettingsPanel.cpp
@@ -33,7 +46,11 @@ target_sources(AutoMenuAIPro PRIVATE
 
 target_include_directories(AutoMenuAIPro PRIVATE
     App
+    Core
+    Audio
+    Analysis
     UI
+    UI/Bridge
     UI/Dashboard
     UI/Theme
     UI/Header
@@ -47,6 +64,8 @@ target_include_directories(AutoMenuAIPro PRIVATE
 
 target_link_libraries(AutoMenuAIPro PRIVATE
     juce::juce_gui_extra
+    juce::juce_audio_utils
+    juce::juce_dsp
 )
 
 target_compile_definitions(AutoMenuAIPro PRIVATE
