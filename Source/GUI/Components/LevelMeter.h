@@ -11,4 +11,5 @@ private:
     float level = 0.0f;
     float peakHold = 0.0f;
     float rmsGhost = 0.0f;
+    float clipHold = 0.0f;
 };

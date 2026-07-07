@@ -24,9 +24,6 @@ void KnobLookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int w, 
     g.setColour (juce::Colour (0xd5000000));
     g.fillEllipse (dial.translated (0.0f, 5.8f));
 
-    g.setColour (juce::Colour (0x64000000));
-    g.fillEllipse (dial.expanded (4.0f).translated (0.0f, 2.0f));
-
     if (hot)
     {
         g.setColour (fill.withAlpha (0.15f));
@@ -41,8 +38,8 @@ void KnobLookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int w, 
         const float a = start + (end - start) * t;
         const bool major = (i % 16) == 0;
         const bool mid = (i % 8) == 0;
-
         const float len = major ? 11.0f : mid ? 7.4f : 4.8f;
+
         auto dir = juce::Point<float> (std::sin (a), -std::cos (a));
         auto p1 = centre + dir * (radius + 1.0f);
         auto p2 = centre + dir * (radius - len);
@@ -75,12 +72,9 @@ void KnobLookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int w, 
     g.setGradientFill (bodyGrad);
     g.fillEllipse (outer.reduced (7.5f));
 
-    for (int i = 0; i < 12; ++i)
-    {
-        const float yy = outer.getY() + 13.0f + (float) i * 3.1f;
-        g.setColour (juce::Colour (0x0fffffff));
-        g.drawLine (outer.getX() + 18.0f, yy, outer.getRight() - 18.0f, yy + 0.8f, 0.6f);
-    }
+    juce::Path valueArc;
+    valueArc.addCentredArc (centre.x, centre.y, radius - 13.5f, radius - 13.5f,
+                            0.0f, start, angle, true);
 
     juce::Path backArc;
     backArc.addCentredArc (centre.x, centre.y, radius - 13.5f, radius - 13.5f,
@@ -90,10 +84,6 @@ void KnobLookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int w, 
     g.strokePath (backArc, juce::PathStrokeType (6.1f,
                                                  juce::PathStrokeType::curved,
                                                  juce::PathStrokeType::rounded));
-
-    juce::Path valueArc;
-    valueArc.addCentredArc (centre.x, centre.y, radius - 13.5f, radius - 13.5f,
-                            0.0f, start, angle, true);
 
     g.setColour (fill.withAlpha (hot ? 0.30f : 0.17f));
     g.strokePath (valueArc, juce::PathStrokeType (10.0f,
@@ -135,9 +125,6 @@ void KnobLookAndFeel::drawRotarySlider (juce::Graphics& g, int x, int y, int w, 
     dot = dot.transformedBy (juce::AffineTransform::rotation (angle, centre.x, centre.y));
     g.setColour (fill.brighter (0.48f).withAlpha (hot ? 1.0f : 0.88f));
     g.fillEllipse (dot);
-
-    g.setColour (juce::Colour (0x22ffffff));
-    g.drawEllipse (outer.reduced (10.0f), 0.6f);
 
     if (hot)
     {
