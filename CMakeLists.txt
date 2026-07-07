@@ -32,6 +32,8 @@ target_sources(AutoMenuAIPro PRIVATE
     Analysis/NoiseGate.cpp
     Analysis/ToneStabilizer.cpp
 
+    Cubase/MidiDeviceManager.cpp
+
     UI/Dashboard/Dashboard.cpp
     UI/Theme/AppTheme.cpp
     UI/Settings/SettingsPanel.cpp
@@ -51,6 +53,7 @@ target_include_directories(AutoMenuAIPro PRIVATE
     Analysis
     Utils
     UI
+    Cubase
     UI/Dashboard
     UI/Theme
     UI/Header
@@ -69,6 +72,7 @@ target_link_libraries(AutoMenuAIPro PRIVATE
     juce::juce_events
     juce::juce_audio_utils
     juce::juce_dsp
+    juce::juce_audio_devices
 )
 
 target_compile_definitions(AutoMenuAIPro PRIVATE
