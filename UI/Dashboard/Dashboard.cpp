@@ -39,8 +39,7 @@ Dashboard::Dashboard()
         core.applyCurrentSuggestion();
     };
 
-    core.startAudio();
-    core.connectCubaseMidiAuto();
+    core.initialiseLiveSession();
 
     startTimerHz (12);
 }
@@ -48,7 +47,7 @@ Dashboard::Dashboard()
 Dashboard::~Dashboard()
 {
     stopTimer();
-    core.stopAudio();
+    core.shutdownLiveSession();
 }
 
 void Dashboard::paint (juce::Graphics& g)
@@ -102,6 +101,7 @@ void Dashboard::resized()
 
 void Dashboard::timerCallback()
 {
+    core.reconnectIfNeeded();
     updateToneDisplay();
 }
 
@@ -109,6 +109,11 @@ void Dashboard::updateToneDisplay()
 {
     toneDetector.setRealtimeToneState (core.getRealtimeToneState());
     toneDetector.setSuggestionState (core.updateSuggestion());
+    footer.setStatus (core.getWorkspaceName(),
+                      core.getAudioEngine().isRunning(),
+                      core.isCubaseConnected(),
+                      core.isPerformanceMode(),
+                      core.getCubaseMidiOutputName());
 }
 
 void Dashboard::toggleSettings()
@@ -119,7 +124,10 @@ void Dashboard::toggleSettings()
 void Dashboard::showSettings (bool shouldShow)
 {
     settingsVisible = shouldShow;
-    settingsPanel.setVisible (settingsVisible);
+    settingsPanel.setVisible (settingsVisible && ! core.isPerformanceMode());
     settingsPanel.toFront (true);
+
+    if (settingsVisible && core.isPerformanceMode())
+        settingsVisible = false;
     repaint();
 }

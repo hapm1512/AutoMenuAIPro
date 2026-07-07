@@ -38,6 +38,9 @@ target_sources(AutoMenuAIPro PRIVATE
     Core/SuggestionEngine.cpp
     
     Workspace/TonePresetMapping.cpp
+    Workspace/WorkspaceState.cpp
+
+    Utils/AppLogger.cpp
 
     Cubase/MidiDeviceManager.cpp
     Cubase/MidiCommandQueue.cpp

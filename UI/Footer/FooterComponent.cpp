@@ -6,6 +6,20 @@ FooterComponent::FooterComponent()
     setInterceptsMouseClicks (true, true);
 }
 
+void FooterComponent::setStatus (const juce::String& workspace,
+                                 bool audioConnected,
+                                 bool cubaseConnected,
+                                 bool performanceMode,
+                                 const juce::String& midiName)
+{
+    workspaceName = workspace.isNotEmpty() ? workspace : "Live Vocal";
+    audioOk = audioConnected;
+    cubaseOk = cubaseConnected;
+    performance = performanceMode;
+    midiOutputName = midiName.isNotEmpty() ? midiName : "No MIDI";
+    repaint();
+}
+
 void FooterComponent::paint (juce::Graphics& g)
 {
     auto area = getLocalBounds();
@@ -20,43 +34,53 @@ void FooterComponent::paint (juce::Graphics& g)
 
     settingsButtonArea = r.removeFromLeft (92).reduced (0, 4);
 
-    g.setColour (AppTheme::panelDark().interpolatedWith (AppTheme::purple(), 0.20f));
+    g.setColour (performance ? AppTheme::green().withAlpha (0.24f)
+                             : AppTheme::panelDark().interpolatedWith (AppTheme::purple(), 0.20f));
     g.fillRoundedRectangle (settingsButtonArea.toFloat(), 6.0f);
 
-    g.setColour (AppTheme::purple());
+    g.setColour (performance ? AppTheme::green() : AppTheme::purple());
     g.drawRoundedRectangle (settingsButtonArea.toFloat(), 6.0f, 1.1f);
 
     g.setColour (AppTheme::text());
     g.setFont (juce::Font (11.5f, juce::Font::bold));
-    g.drawText ("SETTINGS", settingsButtonArea, juce::Justification::centred);
+    g.drawText (performance ? "LIVE" : "SETTINGS", settingsButtonArea, juce::Justification::centred);
 
     r.removeFromLeft (12);
 
     g.setColour (AppTheme::subText());
     g.setFont (juce::Font (10.8f));
-    g.drawText ("Template: Live Vocal", r.removeFromLeft (138), juce::Justification::centredLeft);
+    g.drawText ("Workspace: " + workspaceName, r.removeFromLeft (160), juce::Justification::centredLeft);
+
+    g.setColour (AppTheme::border());
+    g.drawVerticalLine (r.getX(), 6.0f, (float) area.getBottom() - 6.0f);
+    r.removeFromLeft (12);
+
+    auto drawLedText = [&] (const juce::String& text, bool ok, int width)
+    {
+        g.setColour (ok ? AppTheme::green() : AppTheme::red());
+        g.fillEllipse (r.removeFromLeft (9).withSizeKeepingCentre (7, 7).toFloat());
+        r.removeFromLeft (7);
+
+        g.setColour (ok ? AppTheme::green() : AppTheme::subText());
+        g.setFont (juce::Font (10.8f, juce::Font::bold));
+        g.drawText (text, r.removeFromLeft (width), juce::Justification::centredLeft);
+        r.removeFromLeft (10);
+    };
+
+    drawLedText ("Audio", audioOk, 54);
+    drawLedText ("Cubase", cubaseOk, 70);
 
     g.setColour (AppTheme::border());
     g.drawVerticalLine (r.getX(), 6.0f, (float) area.getBottom() - 6.0f);
     r.removeFromLeft (12);
 
     g.setColour (AppTheme::subText());
-    g.drawText ("Shortcut: Analyze / Send Cubase / Export", r.removeFromLeft (245), juce::Justification::centredLeft);
+    g.setFont (juce::Font (10.8f));
+    g.drawText (midiOutputName, r.removeFromLeft (150), juce::Justification::centredLeft);
 
-    g.setColour (AppTheme::border());
-    g.drawVerticalLine (r.getX(), 6.0f, (float) area.getBottom() - 6.0f);
-    r.removeFromLeft (12);
-
-    g.setColour (AppTheme::green());
-    g.fillEllipse (r.removeFromLeft (9).withSizeKeepingCentre (7, 7).toFloat());
-    r.removeFromLeft (7);
-
-    g.setColour (AppTheme::green());
+    g.setColour (performance ? AppTheme::green() : AppTheme::purple());
     g.setFont (juce::Font (10.8f, juce::Font::bold));
-    g.drawText ("Cubase Connected", r.removeFromLeft (126), juce::Justification::centredLeft);
-
-    g.setColour (AppTheme::subText());
-    g.drawText ("loopMIDI   48kHz   CPU 4%", r, juce::Justification::centredRight);
+    g.drawText (performance ? "Performance Mode" : "Setup Mode", r, juce::Justification::centredRight);
 }
 
 void FooterComponent::resized()

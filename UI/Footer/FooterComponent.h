@@ -12,8 +12,20 @@ public:
     void resized() override;
     void mouseUp (const juce::MouseEvent& event) override;
 
+    void setStatus (const juce::String& workspace,
+                    bool audioConnected,
+                    bool cubaseConnected,
+                    bool performanceMode,
+                    const juce::String& midiName);
+
     std::function<void()> onSettings;
 
 private:
+    juce::String workspaceName = "Live Vocal";
+    juce::String midiOutputName = "loopMIDI";
+    bool audioOk = false;
+    bool cubaseOk = false;
+    bool performance = false;
+
     juce::Rectangle<int> settingsButtonArea;
 };
