@@ -19,7 +19,7 @@ namespace AutoMenu
         const juce::ScopedLock sl (lock);
         sampleRate = sampleRateToUse > 0.0 ? sampleRateToUse : 48000.0;
         blockSize = juce::jmax (64, blockSizeToUse);
-        pendingMono.setSize (1, FFTAnalyzer::fftSize * 2);
+        pendingMono.setSize (1, FFTAnalyzer::fftSize * 4);
         pendingMono.clear();
         pendingWrite = 0;
         hasEnoughSamples = false;
@@ -28,6 +28,9 @@ namespace AutoMenu
         latest = AnalysisResult{};
         fftAnalyzer.prepare (sampleRate);
         bpmDetector.reset();
+        noiseGate.prepare (sampleRate);
+        toneStabilizer.reset();
+        analysisHopCounter = 0;
     }
 
     void AnalysisManager::reset()
@@ -101,20 +104,25 @@ namespace AutoMenu
             ts = timestamp;
         }
 
+        noiseGate.processMonoBlock (snapshot);
+        const bool hasSignal = noiseGate.hasSignal();
+
         auto spectrum = fftAnalyzer.analyze (snapshot.getReadPointer (0), snapshot.getNumSamples());
         auto pitch = pitchDetector.detect (snapshot.getReadPointer (0), snapshot.getNumSamples(), sr);
         const float bpm = bpmDetector.processBlock (snapshot.getReadPointer (0), snapshot.getNumSamples(), sr);
 
-        ToneResult tone;
-        if (pitch.valid)
+        ToneResult rawTone;
+        if (hasSignal && pitch.valid)
         {
             updateChromaFromPitch (pitch.hz, pitch.confidence);
-            tone = keyDetector.detectFromChroma (chroma, bpm);
-            tone.pitchHz = pitch.hz;
+            rawTone = keyDetector.detectFromChroma (chroma, bpm);
+            rawTone.pitchHz = pitch.hz;
 
-            if (! tone.valid || tone.confidence < 0.12f)
-                tone = keyDetector.detectFromPitch (pitch.hz, pitch.confidence, bpm);
+            if (! rawTone.valid || rawTone.confidence < 0.10f)
+                rawTone = keyDetector.detectFromPitch (pitch.hz, pitch.confidence, bpm);
         }
+
+        auto tone = toneStabilizer.process (rawTone, hasSignal);
 
         AnalysisResult result;
         result.spectrum = spectrum;
@@ -134,7 +142,7 @@ namespace AutoMenu
         const int pc = ((midi % 12) + 12) % 12;
 
         for (auto& v : chroma)
-            v *= 0.992f;
+            v *= 0.988f;
 
         chroma[(size_t) pc] += juce::jlimit (0.0f, 1.0f, amount);
     }

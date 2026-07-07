@@ -1,5 +1,6 @@
 #include "PitchDetector.h"
 #include <cmath>
+#include <vector>
 
 namespace AutoMenu
 {
@@ -19,52 +20,83 @@ namespace AutoMenu
     {
         Result result;
 
-        if (samples == nullptr || numSamples < 512 || sampleRate <= 0.0)
+        if (samples == nullptr || numSamples < 1024 || sampleRate <= 0.0)
             return result;
 
         const float level = rms (samples, numSamples);
-        if (level < 0.003f)
+        if (level < 0.004f)
             return result;
 
         const int minLag = juce::jmax (1, (int) (sampleRate / 1200.0));
-        const int maxLag = juce::jmin (numSamples / 2, (int) (sampleRate / 55.0));
+        const int maxLag = juce::jmin (numSamples / 2 - 2, (int) (sampleRate / 45.0));
 
-        float bestCorr = 0.0f;
+        if (maxLag <= minLag + 4)
+            return result;
+
+        std::vector<float> cmnd ((size_t) maxLag + 1, 1.0f);
+        double runningSum = 0.0;
+
+        for (int lag = 1; lag <= maxLag; ++lag)
+        {
+            double diff = 0.0;
+            const int count = numSamples - lag;
+
+            for (int i = 0; i < count; ++i)
+            {
+                const double d = (double) samples[i] - (double) samples[i + lag];
+                diff += d * d;
+            }
+
+            runningSum += diff;
+            cmnd[(size_t) lag] = runningSum > 1.0e-12
+                ? (float) ((double) lag * diff / runningSum)
+                : 1.0f;
+        }
+
         int bestLag = 0;
+        float bestValue = 1.0f;
+        const float threshold = 0.18f;
 
         for (int lag = minLag; lag <= maxLag; ++lag)
         {
-            double corr = 0.0;
-            double energyA = 0.0;
-            double energyB = 0.0;
-
-            const int count = numSamples - lag;
-            for (int i = 0; i < count; ++i)
+            const float v = cmnd[(size_t) lag];
+            if (v < threshold)
             {
-                const double a = samples[i];
-                const double b = samples[i + lag];
-                corr += a * b;
-                energyA += a * a;
-                energyB += b * b;
+                while (lag + 1 <= maxLag && cmnd[(size_t) (lag + 1)] < v)
+                    ++lag;
+                bestLag = lag;
+                bestValue = cmnd[(size_t) lag];
+                break;
             }
 
-            const double denom = std::sqrt (energyA * energyB) + 1.0e-12;
-            const float norm = (float) (corr / denom);
-
-            if (norm > bestCorr)
+            if (v < bestValue)
             {
-                bestCorr = norm;
+                bestValue = v;
                 bestLag = lag;
             }
         }
 
-        if (bestLag > 0 && bestCorr > 0.35f)
+        if (bestLag <= 0 || bestValue > 0.42f)
+            return result;
+
+        float refinedLag = (float) bestLag;
+        if (bestLag > 1 && bestLag < maxLag - 1)
         {
-            result.hz = (float) (sampleRate / (double) bestLag);
-            result.confidence = juce::jlimit (0.0f, 1.0f, (bestCorr - 0.35f) / 0.55f);
-            result.valid = true;
+            const float y0 = cmnd[(size_t) (bestLag - 1)];
+            const float y1 = cmnd[(size_t) bestLag];
+            const float y2 = cmnd[(size_t) (bestLag + 1)];
+            const float denom = (y0 - 2.0f * y1 + y2);
+            if (std::abs (denom) > 1.0e-6f)
+                refinedLag += 0.5f * (y0 - y2) / denom;
         }
 
+        const float hz = (float) (sampleRate / (double) refinedLag);
+        if (hz < 45.0f || hz > 1200.0f)
+            return result;
+
+        result.hz = hz;
+        result.confidence = juce::jlimit (0.0f, 1.0f, 1.0f - bestValue * 2.1f);
+        result.valid = result.confidence > 0.22f;
         return result;
     }
 }

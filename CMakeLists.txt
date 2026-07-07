@@ -29,6 +29,8 @@ target_sources(AutoMenuAIPro PRIVATE
     Analysis/PitchDetector.cpp
     Analysis/KeyDetector.cpp
     Analysis/BPMDetector.cpp
+    Analysis/NoiseGate.cpp
+    Analysis/ToneStabilizer.cpp
 
     UI/Dashboard/Dashboard.cpp
     UI/Theme/AppTheme.cpp

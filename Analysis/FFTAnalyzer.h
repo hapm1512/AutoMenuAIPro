@@ -8,7 +8,7 @@ namespace AutoMenu
     class FFTAnalyzer final
     {
     public:
-        static constexpr int fftOrder = 11;
+        static constexpr int fftOrder = 12;
         static constexpr int fftSize = 1 << fftOrder;
 
         FFTAnalyzer();

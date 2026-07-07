@@ -379,6 +379,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\PitchDetector.cpp" />
     <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\KeyDetector.cpp" />
     <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\BPMDetector.cpp" />
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\NoiseGate.cpp" />
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\ToneStabilizer.cpp" />
     <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Dashboard\Dashboard.cpp" />
     <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Theme\AppTheme.cpp" />
     <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Settings\SettingsPanel.cpp" />

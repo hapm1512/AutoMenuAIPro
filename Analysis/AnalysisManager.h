@@ -12,6 +12,8 @@
 #include "PitchDetector.h"
 #include "KeyDetector.h"
 #include "BPMDetector.h"
+#include "NoiseGate.h"
+#include "ToneStabilizer.h"
 
 namespace AutoMenu
 {
@@ -42,6 +44,7 @@ namespace AutoMenu
         juce::AudioBuffer<float> pendingMono;
         int pendingWrite = 0;
         bool hasEnoughSamples = false;
+        int analysisHopCounter = 0;
 
         double sampleRate = 48000.0;
         int blockSize = 512;
@@ -51,6 +54,8 @@ namespace AutoMenu
         PitchDetector pitchDetector;
         KeyDetector keyDetector;
         BPMDetector bpmDetector;
+        NoiseGate noiseGate;
+        ToneStabilizer toneStabilizer;
 
         std::array<float, 12> chroma{};
         AnalysisResult latest;

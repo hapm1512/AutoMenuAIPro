@@ -9,6 +9,8 @@ D:\Projects\AutoMenuAIPro\Analysis\FFTAnalyzer.cpp;D:\Projects\AutoMenuAIPro\Bui
 D:\Projects\AutoMenuAIPro\Analysis\PitchDetector.cpp;D:\Projects\AutoMenuAIPro\Build\AutoMenuAIPro.dir\Release\PitchDetector.obj
 D:\Projects\AutoMenuAIPro\Analysis\KeyDetector.cpp;D:\Projects\AutoMenuAIPro\Build\AutoMenuAIPro.dir\Release\KeyDetector.obj
 D:\Projects\AutoMenuAIPro\Analysis\BPMDetector.cpp;D:\Projects\AutoMenuAIPro\Build\AutoMenuAIPro.dir\Release\BPMDetector.obj
+D:\Projects\AutoMenuAIPro\Analysis\NoiseGate.cpp;D:\Projects\AutoMenuAIPro\Build\AutoMenuAIPro.dir\Release\NoiseGate.obj
+D:\Projects\AutoMenuAIPro\Analysis\ToneStabilizer.cpp;D:\Projects\AutoMenuAIPro\Build\AutoMenuAIPro.dir\Release\ToneStabilizer.obj
 D:\Projects\AutoMenuAIPro\UI\Dashboard\Dashboard.cpp;D:\Projects\AutoMenuAIPro\Build\AutoMenuAIPro.dir\Release\Dashboard.obj
 D:\Projects\AutoMenuAIPro\UI\Theme\AppTheme.cpp;D:\Projects\AutoMenuAIPro\Build\AutoMenuAIPro.dir\Release\AppTheme.obj
 D:\Projects\AutoMenuAIPro\UI\Settings\SettingsPanel.cpp;D:\Projects\AutoMenuAIPro\Build\AutoMenuAIPro.dir\Release\SettingsPanel.obj
