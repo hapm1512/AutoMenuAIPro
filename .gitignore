@@ -1,0 +1,46 @@
+# Build
+Build/
+build/
+out/
+
+# Visual Studio
+.vs/
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+*.userosscache
+*.VC.db-shm
+*.VC.db-wal
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+
+# Visual Studio Build
+*.obj
+*.pch
+*.pdb
+*.ilk
+*.idb
+*.ipdb
+*.iobj
+*.tlog
+*.log
+
+# Executables
+*.exe
+*.dll
+*.lib
+*.exp
+
+# JUCE
+JuceLibraryCode/
+
+# Temporary
+*.tmp
+*.cache
