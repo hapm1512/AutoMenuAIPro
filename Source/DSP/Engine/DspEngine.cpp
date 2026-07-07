@@ -3,8 +3,8 @@
 void DspEngine::prepare (double sampleRate, int blockSize, int channels)
 {
     preamp.prepare (sampleRate, blockSize, channels);
-    eq.prepare (sampleRate, blockSize, channels);
     gate.prepare (sampleRate, blockSize, channels);
+    eq.prepare (sampleRate, blockSize, channels);
     deesser.prepare (sampleRate, blockSize, channels);
     compressor.prepare (sampleRate, blockSize, channels);
     saturation.prepare (sampleRate, blockSize, channels);
@@ -19,8 +19,8 @@ void DspEngine::prepare (double sampleRate, int blockSize, int channels)
 void DspEngine::reset()
 {
     preamp.reset();
-    eq.reset();
     gate.reset();
+    eq.reset();
     deesser.reset();
     compressor.reset();
     saturation.reset();
@@ -31,12 +31,14 @@ void DspEngine::reset()
 void DspEngine::process (juce::AudioBuffer<float>& buffer,
                          juce::AudioProcessorValueTreeState& apvts)
 {
+    juce::ScopedNoDenormals noDenormals;
+
     const auto in = buffer.getMagnitude (0, buffer.getNumSamples());
     inputPeak.store (juce::jlimit (0.0f, 1.0f, in));
 
     preamp.process (buffer, apvts);
-    eq.process (buffer, apvts);
     gate.process (buffer, apvts);
+    eq.process (buffer, apvts);
     deesser.process (buffer, apvts);
     compressor.process (buffer, apvts);
     saturation.process (buffer, apvts);
@@ -45,9 +47,7 @@ void DspEngine::process (juce::AudioBuffer<float>& buffer,
 
     const auto out = buffer.getMagnitude (0, buffer.getNumSamples());
     outputPeak.store (juce::jlimit (0.0f, 1.0f, out));
-
-    // Meter giả lập.
-    gainReduction.store (0.25f);
+    gainReduction.store (compressor.getGainReduction());
 }
 
 float DspEngine::getInputPeak() const noexcept

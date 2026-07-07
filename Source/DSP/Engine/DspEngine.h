@@ -25,8 +25,8 @@ public:
 
 private:
     PreampModule preamp;
-    EqModule eq;
     GateModule gate;
+    EqModule eq;
     DeEsserModule deesser;
     CompressorModule compressor;
     SaturationModule saturation;
