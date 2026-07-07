@@ -32,8 +32,11 @@ target_sources(AutoMenuAIPro PRIVATE
     Analysis/NoiseGate.cpp
     Analysis/ToneStabilizer.cpp
 
+    Core/MacroManager.cpp
+    
     Cubase/MidiDeviceManager.cpp
     Cubase/MidiCommandQueue.cpp
+    Cubase/CubaseManager.cpp
 
     UI/Dashboard/Dashboard.cpp
     UI/Theme/AppTheme.cpp

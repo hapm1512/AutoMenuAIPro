@@ -51,7 +51,7 @@ void MacroPanelComponent::paint (juce::Graphics& g)
             auto card = juce::Rectangle<int> (grid.getX() + col * (cardW + gapX),
                                               grid.getY() + row * (cardH + gapY),
                                               cardW, cardH);
-            drawCard (g, card, items[(size_t) index]);
+            drawCard (g, card, items[(size_t) index], index);
             ++index;
         }
     }
@@ -59,8 +59,37 @@ void MacroPanelComponent::paint (juce::Graphics& g)
 
 void MacroPanelComponent::resized() {}
 
-void MacroPanelComponent::drawCard (juce::Graphics& g, juce::Rectangle<int> area, const MacroItem& item)
+void MacroPanelComponent::mouseUp (const juce::MouseEvent& event)
 {
+    const auto position = event.getPosition();
+
+    for (int i = 0; i < (int) macroBounds.size(); ++i)
+    {
+        if (macroBounds[(size_t) i].contains (position))
+        {
+            setActiveMacro (i);
+
+            if (onMacroPressed)
+                onMacroPressed (i);
+
+            return;
+        }
+    }
+}
+
+void MacroPanelComponent::setActiveMacro (int index)
+{
+    for (int i = 0; i < (int) items.size(); ++i)
+        items[(size_t) i].active = (i == index);
+
+    repaint();
+}
+
+void MacroPanelComponent::drawCard (juce::Graphics& g, juce::Rectangle<int> area, const MacroItem& item, int index)
+{
+    if (index >= 0 && index < (int) macroBounds.size())
+        macroBounds[(size_t) index] = area;
+
     auto bg = AppTheme::panelDark().interpolatedWith (item.colour, item.active ? 0.24f : 0.11f);
     g.setColour (bg);
     g.fillRoundedRectangle (area.toFloat(), 6.0f);

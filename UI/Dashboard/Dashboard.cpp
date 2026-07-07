@@ -29,7 +29,14 @@ Dashboard::Dashboard()
         showSettings (false);
     };
 
+    macroPanel.onMacroPressed = [this] (int macroIndex)
+    {
+        core.triggerMacro (macroIndex);
+    };
+
     core.startAudio();
+    core.connectCubaseMidiAuto();
+
     startTimerHz (12);
 }
 
