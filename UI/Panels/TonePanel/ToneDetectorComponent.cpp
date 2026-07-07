@@ -31,6 +31,12 @@ void ToneDetectorComponent::setRealtimeToneState (const AutoMenu::RealtimeToneSt
     repaint();
 }
 
+void ToneDetectorComponent::setSuggestionState (const AutoMenu::SuggestedPreset& suggestion)
+{
+    suggestionState = suggestion;
+    repaint();
+}
+
 juce::String ToneDetectorComponent::getToneText() const
 {
     if (! hasLiveResult)
@@ -197,6 +203,40 @@ void ToneDetectorComponent::paint (juce::Graphics& g)
         g.drawText ((currentState.stable ? "STABLE" : "LISTENING") + juce::String ("     CAM ") + getCamelotText(),
                     info, juce::Justification::centred);
     }
+
+    inner.removeFromTop (8);
+
+    auto suggestion = inner.removeFromTop (92);
+    g.setColour (AppTheme::panelDark());
+    g.fillRoundedRectangle (suggestion.toFloat(), 8.0f);
+    g.setColour (suggestionState.canApply ? AppTheme::green() : AppTheme::border());
+    g.drawRoundedRectangle (suggestion.toFloat(), 8.0f, 1.0f);
+
+    auto s = suggestion.reduced (12, 8);
+
+    g.setColour (AppTheme::subText());
+    g.setFont (juce::Font (9.5f, juce::Font::bold));
+    g.drawText ("SUGGESTED PRESET", s.removeFromTop (14), juce::Justification::centredLeft);
+
+    g.setColour (suggestionState.canApply ? AppTheme::green() : AppTheme::subText());
+    g.setFont (juce::Font (15.0f, juce::Font::bold));
+    g.drawText (suggestionState.canApply ? suggestionState.presetName : "Waiting for stable tone",
+                s.removeFromTop (24), juce::Justification::centredLeft);
+
+    auto bottom = s.removeFromTop (32);
+    auto meta = bottom;
+    applyButtonBounds = bottom.removeFromRight (78);
+    bottom.removeFromRight (8);
+    meta = bottom;
+
+    g.setColour (AppTheme::subText());
+    g.setFont (juce::Font (9.0f));
+    g.drawText (suggestionState.canApply
+                    ? (suggestionState.detectedTone + "  " + suggestionState.getConfidenceText())
+                    : "No suggestion",
+                meta, juce::Justification::centredLeft);
+
+    drawButton (g, applyButtonBounds, "APPLY", suggestionState.canApply ? AppTheme::green() : AppTheme::border());
 }
 
 void ToneDetectorComponent::drawButton (juce::Graphics& g, juce::Rectangle<int> area,
@@ -258,6 +298,15 @@ void ToneDetectorComponent::drawLedMeter (juce::Graphics& g, juce::Rectangle<int
     auto inner = area.reduced (8, 4);
     drawRow (inner.removeFromTop (18), "L", leftLevel);
     drawRow (inner.removeFromTop (18), "R", rightLevel);
+}
+
+void ToneDetectorComponent::mouseUp (const juce::MouseEvent& event)
+{
+    if (applyButtonBounds.contains (event.getPosition()) && suggestionState.canApply)
+    {
+        if (onApplySuggestion)
+            onApplySuggestion();
+    }
 }
 
 void ToneDetectorComponent::resized() {}

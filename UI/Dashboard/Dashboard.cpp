@@ -34,6 +34,11 @@ Dashboard::Dashboard()
         core.triggerMacro (macroIndex);
     };
 
+    toneDetector.onApplySuggestion = [this]
+    {
+        core.applyCurrentSuggestion();
+    };
+
     core.startAudio();
     core.connectCubaseMidiAuto();
 
@@ -103,6 +108,7 @@ void Dashboard::timerCallback()
 void Dashboard::updateToneDisplay()
 {
     toneDetector.setRealtimeToneState (core.getRealtimeToneState());
+    toneDetector.setSuggestionState (core.updateSuggestion());
 }
 
 void Dashboard::toggleSettings()

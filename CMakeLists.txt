@@ -35,7 +35,10 @@ target_sources(AutoMenuAIPro PRIVATE
 
     Core/MacroManager.cpp
     Core/AutomationEngine.cpp
+    Core/SuggestionEngine.cpp
     
+    Workspace/TonePresetMapping.cpp
+
     Cubase/MidiDeviceManager.cpp
     Cubase/MidiCommandQueue.cpp
     Cubase/CubaseManager.cpp
@@ -58,6 +61,7 @@ target_include_directories(AutoMenuAIPro PRIVATE
     Audio
     Analysis
     Utils
+    Workspace
     UI
     Cubase
     UI/Dashboard

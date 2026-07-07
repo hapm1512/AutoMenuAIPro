@@ -69,6 +69,17 @@ namespace AutoMenu
         macroManager.triggerMacro (macroIndex);
     }
 
+    bool AutoMenuCore::applyCurrentSuggestion()
+    {
+        const auto suggestion = getLatestSuggestion();
+
+        if (! suggestion.canApply || suggestion.macroIndex < 0)
+            return false;
+
+        macroManager.triggerMacro (suggestion.macroIndex);
+        return true;
+    }
+
     AnalysisResult AutoMenuCore::getAnalysisResult() const
     {
         return analysisManager.getLatestResult();
@@ -82,5 +93,17 @@ namespace AutoMenu
     RealtimeToneState AutoMenuCore::getRealtimeToneState() const
     {
         return analysisManager.getLatestToneState();
+    }
+
+    SuggestedPreset AutoMenuCore::updateSuggestion()
+    {
+        const auto tone = analysisManager.getLatestToneState();
+        const auto now = juce::Time::getMillisecondCounterHiRes() * 0.001;
+        return suggestionEngine.update (tone, tonePresetMapping, now);
+    }
+
+    SuggestedPreset AutoMenuCore::getLatestSuggestion() const
+    {
+        return suggestionEngine.getLatestSuggestion();
     }
 }
