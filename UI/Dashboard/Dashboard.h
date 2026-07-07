@@ -7,16 +7,26 @@
 #include "../Panels/TonePanel/ToneDetectorComponent.h"
 #include "../Footer/FooterComponent.h"
 #include "../Settings/SettingsPanel.h"
+#include "../../Core/AutoMenuCore.h"
 
-class Dashboard final : public juce::Component
+class Dashboard final : public juce::Component,
+                        private juce::Timer
 {
 public:
     Dashboard();
+    ~Dashboard() override;
 
     void paint (juce::Graphics& g) override;
     void resized() override;
 
 private:
+    void timerCallback() override;
+    void toggleSettings();
+    void showSettings (bool shouldShow);
+    void updateToneDisplay();
+
+    AutoMenu::AutoMenuCore core;
+
     HeaderComponent header;
     MacroPanelComponent macroPanel;
     MixerPanelComponent mixerPanel;
@@ -32,7 +42,4 @@ private:
     juce::Rectangle<int> statusArea;
     juce::Rectangle<int> toneArea;
     juce::Rectangle<int> settingsArea;
-
-    void toggleSettings();
-    void showSettings (bool shouldShow);
 };

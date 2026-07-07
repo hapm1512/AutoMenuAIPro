@@ -28,6 +28,15 @@ Dashboard::Dashboard()
     {
         showSettings (false);
     };
+
+    core.startAudio();
+    startTimerHz (12);
+}
+
+Dashboard::~Dashboard()
+{
+    stopTimer();
+    core.stopAudio();
 }
 
 void Dashboard::paint (juce::Graphics& g)
@@ -77,6 +86,16 @@ void Dashboard::resized()
 
     settingsPanel.setBounds (settingsArea);
     settingsPanel.toFront (false);
+}
+
+void Dashboard::timerCallback()
+{
+    updateToneDisplay();
+}
+
+void Dashboard::updateToneDisplay()
+{
+    toneDetector.setAnalysisResult (core.getAnalysisResult());
 }
 
 void Dashboard::toggleSettings()

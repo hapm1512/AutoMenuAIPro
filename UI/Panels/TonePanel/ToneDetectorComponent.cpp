@@ -1,7 +1,54 @@
 #include "ToneDetectorComponent.h"
 #include "../../Theme/AppTheme.h"
 
-ToneDetectorComponent::ToneDetectorComponent() {}
+ToneDetectorComponent::ToneDetectorComponent() = default;
+
+void ToneDetectorComponent::setAnalysisResult (const AutoMenu::AnalysisResult& result)
+{
+    currentResult = result;
+    hasLiveResult = result.tone.valid;
+    repaint();
+}
+
+juce::String ToneDetectorComponent::getToneText() const
+{
+    if (! hasLiveResult)
+        return "--";
+
+    return currentResult.tone.keyName + " " + currentResult.tone.scaleName;
+}
+
+juce::String ToneDetectorComponent::getScaleText() const
+{
+    if (! hasLiveResult)
+        return "Minor";
+
+    return currentResult.tone.scaleName;
+}
+
+juce::String ToneDetectorComponent::getBpmText() const
+{
+    if (! hasLiveResult || currentResult.tone.bpm <= 1.0f)
+        return "--";
+
+    return juce::String ((int) std::round (currentResult.tone.bpm));
+}
+
+juce::String ToneDetectorComponent::getCamelotText() const
+{
+    if (! hasLiveResult)
+        return "--";
+
+    return currentResult.tone.camelot;
+}
+
+float ToneDetectorComponent::getConfidence() const
+{
+    if (! hasLiveResult)
+        return 0.0f;
+
+    return juce::jlimit (0.0f, 1.0f, currentResult.tone.confidence);
+}
 
 void ToneDetectorComponent::paint (juce::Graphics& g)
 {
@@ -30,46 +77,55 @@ void ToneDetectorComponent::paint (juce::Graphics& g)
 
     auto top = card.reduced (14, 8);
 
-    g.setColour (AppTheme::purple());
+    g.setColour (hasLiveResult ? AppTheme::purple() : AppTheme::subText());
     g.setFont (juce::Font (23.0f, juce::Font::bold));
-    g.drawText ("D Minor", top.removeFromTop (38), juce::Justification::centred);
+    g.drawText (getToneText(), top.removeFromTop (38), juce::Justification::centred);
 
     g.setColour (AppTheme::subText());
     g.setFont (juce::Font (11.0f));
     g.drawText ("Confidence", top.removeFromTop (18), juce::Justification::centred);
 
     auto ringArea = top.removeFromTop (70).withSizeKeepingCentre (72, 64).toFloat();
+    const float confidence = getConfidence();
 
     g.setColour (AppTheme::border());
     g.drawEllipse (ringArea.withSizeKeepingCentre (60.0f, 60.0f), 4.2f);
 
     juce::Path arc;
-    arc.addCentredArc (ringArea.getCentreX(), ringArea.getCentreY(), 29.0f, 29.0f,
-                       0.0f, 2.4f, 6.15f, true);
+    const float startAngle = 2.40f;
+    const float endAngle = startAngle + confidence * 3.75f;
 
-    g.setColour (AppTheme::purple());
+    arc.addCentredArc (ringArea.getCentreX(), ringArea.getCentreY(), 29.0f, 29.0f,
+                       0.0f, startAngle, endAngle, true);
+
+    g.setColour (hasLiveResult ? AppTheme::purple() : AppTheme::border());
     g.strokePath (arc, juce::PathStrokeType (4.2f));
 
     g.setColour (AppTheme::text());
     g.setFont (juce::Font (20.0f, juce::Font::bold));
-    g.drawText ("96%", ringArea.toNearestInt(), juce::Justification::centred);
+    g.drawText (hasLiveResult ? juce::String ((int) std::round (confidence * 100.0f)) + "%" : "--%",
+                ringArea.toNearestInt(), juce::Justification::centred);
 
     auto scale = top.removeFromTop (28).reduced (16, 2);
     auto major = scale.removeFromLeft (scale.getWidth() / 2 - 4);
     scale.removeFromLeft (8);
     auto minor = scale;
 
-    g.setColour (AppTheme::panel());
+    const bool isMinor = getScaleText().equalsIgnoreCase ("Minor");
+
+    g.setColour (isMinor ? AppTheme::panel() : AppTheme::purple());
     g.fillRoundedRectangle (major.toFloat(), 5.0f);
-    g.setColour (AppTheme::border());
+    g.setColour (isMinor ? AppTheme::border() : AppTheme::purple());
     g.drawRoundedRectangle (major.toFloat(), 5.0f, 1.0f);
 
     g.setColour (AppTheme::text());
     g.setFont (juce::Font (10.5f, juce::Font::bold));
     g.drawText ("Major", major, juce::Justification::centred);
 
-    g.setColour (AppTheme::purple());
+    g.setColour (isMinor ? AppTheme::purple() : AppTheme::panel());
     g.fillRoundedRectangle (minor.toFloat(), 5.0f);
+    g.setColour (isMinor ? AppTheme::purple() : AppTheme::border());
+    g.drawRoundedRectangle (minor.toFloat(), 5.0f, 1.0f);
     g.setColour (AppTheme::text());
     g.drawText ("Minor", minor, juce::Justification::centred);
 
@@ -99,7 +155,7 @@ void ToneDetectorComponent::paint (juce::Graphics& g)
 
     g.setColour (AppTheme::text());
     g.setFont (juce::Font (13.5f, juce::Font::bold));
-    g.drawText ("D Minor", center, juce::Justification::centred);
+    g.drawText (getToneText(), center, juce::Justification::centred);
 
     top.removeFromTop (8);
 
@@ -114,6 +170,15 @@ void ToneDetectorComponent::paint (juce::Graphics& g)
     top.removeFromTop (8);
 
     drawLedMeter (g, top.removeFromTop (48));
+
+    if (hasLiveResult)
+    {
+        auto info = top.removeFromTop (20);
+        g.setColour (AppTheme::subText());
+        g.setFont (juce::Font (9.5f));
+        g.drawText ("BPM " + getBpmText() + "     CAM " + getCamelotText(),
+                    info, juce::Justification::centred);
+    }
 }
 
 void ToneDetectorComponent::drawButton (juce::Graphics& g, juce::Rectangle<int> area,
@@ -131,6 +196,10 @@ void ToneDetectorComponent::drawButton (juce::Graphics& g, juce::Rectangle<int> 
 
 void ToneDetectorComponent::drawLedMeter (juce::Graphics& g, juce::Rectangle<int> area)
 {
+    const float confidence = getConfidence();
+    const float leftLevel  = hasLiveResult ? juce::jlimit (0.05f, 1.0f, confidence * 0.90f) : 0.12f;
+    const float rightLevel = hasLiveResult ? juce::jlimit (0.05f, 1.0f, confidence * 0.78f) : 0.10f;
+
     auto drawRow = [&] (juce::Rectangle<int> row, const juce::String& label, float level)
     {
         auto lab = row.removeFromLeft (16);
@@ -169,8 +238,8 @@ void ToneDetectorComponent::drawLedMeter (juce::Graphics& g, juce::Rectangle<int
     g.drawRoundedRectangle (area.toFloat(), 7.0f, 1.0f);
 
     auto inner = area.reduced (8, 4);
-    drawRow (inner.removeFromTop (18), "L", 0.72f);
-    drawRow (inner.removeFromTop (18), "R", 0.61f);
+    drawRow (inner.removeFromTop (18), "L", leftLevel);
+    drawRow (inner.removeFromTop (18), "R", rightLevel);
 }
 
 void ToneDetectorComponent::resized() {}
