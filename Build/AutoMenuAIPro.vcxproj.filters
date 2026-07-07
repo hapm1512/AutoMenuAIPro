@@ -10,7 +10,7 @@
     <ClCompile Include="D:\Projects\AutoMenuAIPro\App\MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Projects\AutoMenuAIPro\Core\CoreController.cpp">
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\Core\AutoMenuCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\Projects\AutoMenuAIPro\Audio\AudioEngine.cpp">
@@ -19,10 +19,10 @@
     <ClCompile Include="D:\Projects\AutoMenuAIPro\Audio\AudioRingBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\AnalysisEngine.cpp">
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\AnalysisManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\FFTProcessor.cpp">
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\FFTAnalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\PitchDetector.cpp">
@@ -31,10 +31,7 @@
     <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\KeyDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\BpmDetector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Bridge\ToneAnalysisBridge.cpp">
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\Analysis\BPMDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Dashboard\Dashboard.cpp">

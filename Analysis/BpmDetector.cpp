@@ -1,56 +1,58 @@
-#include "BpmDetector.h"
+#include "BPMDetector.h"
 #include <cmath>
-#include <algorithm>
 
-namespace automenu::analysis
+namespace AutoMenu
 {
-    float BpmDetector::detect (const std::vector<float>& samples, double sampleRate)
+    void BPMDetector::reset()
     {
-        if (samples.size() < 4096 || sampleRate <= 0.0)
-            return lastBpm;
+        bpm = 0.0f;
+        previousEnergy = 0.0f;
+        timeSeconds = 0.0;
+        lastOnsetSeconds = -1.0;
+        intervals.clear();
+    }
 
-        const int hop = 512;
-        std::vector<float> envelope;
+    float BPMDetector::processBlock (const float* samples, int numSamples, double sampleRate)
+    {
+        if (samples == nullptr || numSamples <= 0 || sampleRate <= 0.0)
+            return bpm;
 
-        for (size_t pos = 0; pos + (size_t) hop < samples.size(); pos += (size_t) hop)
+        double sum = 0.0;
+        for (int i = 0; i < numSamples; ++i)
+            sum += (double) samples[i] * samples[i];
+
+        const float energy = (float) std::sqrt (sum / (double) numSamples);
+        const float threshold = juce::jmax (0.018f, previousEnergy * 1.55f);
+        const bool onset = energy > threshold;
+
+        if (onset)
         {
-            double sum = 0.0;
-            for (int i = 0; i < hop; ++i)
-                sum += std::abs (samples[pos + (size_t) i]);
-
-            envelope.push_back ((float) (sum / hop));
-        }
-
-        if (envelope.size() < 16)
-            return lastBpm;
-
-        const double envRate = sampleRate / hop;
-        int bestLag = 0;
-        float bestScore = 0.0f;
-
-        const int minLag = (int) (envRate * 60.0 / 180.0);
-        const int maxLag = (int) (envRate * 60.0 / 60.0);
-
-        for (int lag = minLag; lag <= maxLag; ++lag)
-        {
-            float score = 0.0f;
-            for (size_t i = 0; i + (size_t) lag < envelope.size(); ++i)
-                score += envelope[i] * envelope[i + (size_t) lag];
-
-            if (score > bestScore)
+            if (lastOnsetSeconds > 0.0)
             {
-                bestScore = score;
-                bestLag = lag;
+                const double interval = timeSeconds - lastOnsetSeconds;
+                if (interval >= 0.25 && interval <= 1.5)
+                {
+                    intervals.push_back (interval);
+                    while (intervals.size() > 16)
+                        intervals.pop_front();
+
+                    double avg = 0.0;
+                    for (auto v : intervals)
+                        avg += v;
+
+                    if (! intervals.empty())
+                    {
+                        avg /= (double) intervals.size();
+                        bpm = (float) juce::jlimit (60.0, 220.0, 60.0 / avg);
+                    }
+                }
             }
+
+            lastOnsetSeconds = timeSeconds;
         }
 
-        if (bestLag > 0)
-        {
-            const auto bpm = (float) (60.0 * envRate / bestLag);
-            if (bpm >= 60.0f && bpm <= 180.0f)
-                lastBpm = lastBpm <= 0.0f ? bpm : (0.85f * lastBpm + 0.15f * bpm);
-        }
-
-        return lastBpm;
+        previousEnergy = previousEnergy * 0.92f + energy * 0.08f;
+        timeSeconds += (double) numSamples / sampleRate;
+        return bpm;
     }
 }

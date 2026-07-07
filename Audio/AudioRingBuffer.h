@@ -4,22 +4,28 @@
 #include <vector>
 #include <atomic>
 
-namespace automenu::audio
+namespace AutoMenu
 {
     class AudioRingBuffer final
     {
     public:
-        explicit AudioRingBuffer (int capacitySamples = 48000 * 10);
+        AudioRingBuffer();
 
-        void reset();
-        void pushMono (const float* samples, int numSamples);
-        int readLatest (std::vector<float>& destination, int numSamples) const;
+        void prepare (int channels, int capacitySamples);
+        void clear();
+
+        void push (const float* const* input, int channels, int samples);
+        int readLatestMono (juce::AudioBuffer<float>& destination, int samples) const;
+
         int getCapacity() const noexcept { return capacity; }
+        int getNumChannels() const noexcept { return numChannels; }
 
     private:
-        std::vector<float> buffer;
+        int numChannels = 0;
         int capacity = 0;
-        std::atomic<int> writeIndex { 0 };
-        mutable juce::SpinLock lock;
+        mutable juce::CriticalSection lock;
+        std::vector<std::vector<float>> data;
+        std::atomic<int> writePosition { 0 };
+        std::atomic<int> writtenSamples { 0 };
     };
 }

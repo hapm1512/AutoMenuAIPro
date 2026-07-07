@@ -1,15 +1,22 @@
 #pragma once
 
-#include <vector>
+#include <juce_core/juce_core.h>
+#include <deque>
 
-namespace automenu::analysis
+namespace AutoMenu
 {
-    class BpmDetector final
+    class BPMDetector final
     {
     public:
-        float detect (const std::vector<float>& samples, double sampleRate);
+        void reset();
+        float processBlock (const float* samples, int numSamples, double sampleRate);
+        float getBpm() const noexcept { return bpm; }
 
     private:
-        float lastBpm = 0.0f;
+        float bpm = 0.0f;
+        float previousEnergy = 0.0f;
+        double timeSeconds = 0.0;
+        double lastOnsetSeconds = -1.0;
+        std::deque<double> intervals;
     };
 }

@@ -2,24 +2,29 @@
 
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "AudioRingBuffer.h"
+#include "../Core/AnalysisTypes.h"
 
-namespace automenu::audio
+namespace AutoMenu
 {
+    class AnalysisManager;
+
     class AudioEngine final : private juce::AudioIODeviceCallback
     {
     public:
         AudioEngine();
         ~AudioEngine() override;
 
-        bool start();
-        void stop();
+        bool initialise (int inputChannels = 2, int outputChannels = 0);
+        void shutdown();
 
-        bool isRunning() const noexcept { return running; }
-        double getSampleRate() const noexcept { return sampleRate; }
-        int getBlockSize() const noexcept { return blockSize; }
+        void setAnalysisManager (AnalysisManager* manager) noexcept;
+
         juce::String getCurrentDeviceName() const;
+        double getSampleRate() const noexcept { return sampleRate; }
+        int getBufferSize() const noexcept { return bufferSize; }
+        bool isRunning() const noexcept { return running; }
 
-        AudioRingBuffer& getRingBuffer() noexcept { return ringBuffer; }
+        juce::AudioDeviceManager& getDeviceManager() noexcept { return deviceManager; }
         const AudioRingBuffer& getRingBuffer() const noexcept { return ringBuffer; }
 
     private:
@@ -29,15 +34,14 @@ namespace automenu::audio
                                                int numOutputChannels,
                                                int numSamples,
                                                const juce::AudioIODeviceCallbackContext& context) override;
-
         void audioDeviceAboutToStart (juce::AudioIODevice* device) override;
         void audioDeviceStopped() override;
 
         juce::AudioDeviceManager deviceManager;
         AudioRingBuffer ringBuffer;
-        std::vector<float> monoScratch;
-        std::atomic<bool> running { false };
+        AnalysisManager* analysisManager = nullptr;
         double sampleRate = 48000.0;
-        int blockSize = 512;
+        int bufferSize = 0;
+        bool running = false;
     };
 }

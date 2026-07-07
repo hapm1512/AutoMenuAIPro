@@ -1,26 +1,19 @@
 #pragma once
 
 #include <array>
-#include <vector>
+#include <juce_core/juce_core.h>
 #include "../Core/AnalysisTypes.h"
 
-namespace automenu::analysis
+namespace AutoMenu
 {
     class KeyDetector final
     {
     public:
-        automenu::core::ToneAnalysisResult detect (const std::array<float, 12>& chroma,
-                                                   float pitchHz,
-                                                   float pitchConfidence,
-                                                   float bpm) const;
-
-        static int pitchClassFromFrequency (float frequencyHz);
-        static juce::String keyNameForPitchClass (int pitchClass);
-        static juce::String camelotForKey (int root, automenu::core::MusicalMode mode);
+        ToneResult detectFromPitch (float pitchHz, float pitchConfidence, float bpm) const;
+        ToneResult detectFromChroma (const std::array<float, 12>& chroma, float bpm) const;
 
     private:
-        static float scoreTemplate (const std::array<float, 12>& chroma,
-                                    const std::array<float, 12>& keyTemplate,
-                                    int shift);
+        static int pitchToMidi (float hz);
+        static float profileScore (const std::array<float, 12>& chroma, const std::array<float, 12>& profile, int root);
     };
 }

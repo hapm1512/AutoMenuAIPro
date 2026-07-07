@@ -1,56 +1,79 @@
 #include "AudioRingBuffer.h"
-#include <algorithm>
 
-namespace automenu::audio
+namespace AutoMenu
 {
-    AudioRingBuffer::AudioRingBuffer (int capacitySamples)
-        : buffer ((size_t) juce::jmax (capacitySamples, 1024), 0.0f),
-          capacity ((int) buffer.size())
+    AudioRingBuffer::AudioRingBuffer() = default;
+
+    void AudioRingBuffer::prepare (int channels, int capacitySamples)
     {
+        const juce::ScopedLock sl (lock);
+        numChannels = juce::jmax (1, channels);
+        capacity = juce::jmax (1024, capacitySamples);
+        data.assign ((size_t) numChannels, std::vector<float> ((size_t) capacity, 0.0f));
+        writePosition.store (0);
+        writtenSamples.store (0);
     }
 
-    void AudioRingBuffer::reset()
+    void AudioRingBuffer::clear()
     {
-        const juce::SpinLock::ScopedLockType sl (lock);
-        std::fill (buffer.begin(), buffer.end(), 0.0f);
-        writeIndex.store (0);
+        const juce::ScopedLock sl (lock);
+        for (auto& channel : data)
+            std::fill (channel.begin(), channel.end(), 0.0f);
+        writePosition.store (0);
+        writtenSamples.store (0);
     }
 
-    void AudioRingBuffer::pushMono (const float* samples, int numSamples)
+    void AudioRingBuffer::push (const float* const* input, int channels, int samples)
     {
-        if (samples == nullptr || numSamples <= 0)
+        if (capacity <= 0 || samples <= 0 || input == nullptr)
             return;
 
-        const juce::SpinLock::ScopedLockType sl (lock);
-        auto index = writeIndex.load();
+        const juce::ScopedLock sl (lock);
+        int wp = writePosition.load();
 
-        for (int i = 0; i < numSamples; ++i)
+        for (int i = 0; i < samples; ++i)
         {
-            buffer[(size_t) index] = samples[i];
-            index = (index + 1) % capacity;
+            for (int ch = 0; ch < numChannels; ++ch)
+            {
+                const int src = juce::jmin (ch, channels - 1);
+                data[(size_t) ch][(size_t) wp] = input[src] != nullptr ? input[src][i] : 0.0f;
+            }
+
+            wp = (wp + 1) % capacity;
         }
 
-        writeIndex.store (index);
+        writePosition.store (wp);
+        writtenSamples.store (juce::jmin (capacity, writtenSamples.load() + samples));
     }
 
-    int AudioRingBuffer::readLatest (std::vector<float>& destination, int numSamples) const
+    int AudioRingBuffer::readLatestMono (juce::AudioBuffer<float>& destination, int samples) const
     {
-        numSamples = juce::jlimit (0, capacity, numSamples);
-        destination.assign ((size_t) numSamples, 0.0f);
-
-        if (numSamples <= 0)
+        if (capacity <= 0 || samples <= 0)
             return 0;
 
-        const juce::SpinLock::ScopedLockType sl (lock);
-        const int currentWrite = writeIndex.load();
-        int start = currentWrite - numSamples;
+        const juce::ScopedLock sl (lock);
+        const int available = writtenSamples.load();
+        const int toRead = juce::jmin (samples, available);
 
+        destination.setSize (1, toRead, false, false, true);
+        destination.clear();
+
+        int start = writePosition.load() - toRead;
         while (start < 0)
             start += capacity;
 
-        for (int i = 0; i < numSamples; ++i)
-            destination[(size_t) i] = buffer[(size_t) ((start + i) % capacity)];
+        auto* out = destination.getWritePointer (0);
+        for (int i = 0; i < toRead; ++i)
+        {
+            const int idx = (start + i) % capacity;
+            float mixed = 0.0f;
 
-        return numSamples;
+            for (int ch = 0; ch < numChannels; ++ch)
+                mixed += data[(size_t) ch][(size_t) idx];
+
+            out[i] = mixed / (float) juce::jmax (1, numChannels);
+        }
+
+        return toRead;
     }
 }

@@ -1,45 +1,47 @@
 #include "AudioEngine.h"
+#include "../Analysis/AnalysisManager.h"
 
-namespace automenu::audio
+namespace AutoMenu
 {
-    AudioEngine::AudioEngine()
-        : ringBuffer (48000 * 12)
-    {
-    }
+    AudioEngine::AudioEngine() = default;
 
     AudioEngine::~AudioEngine()
     {
-        stop();
+        shutdown();
     }
 
-    bool AudioEngine::start()
+    bool AudioEngine::initialise (int inputChannels, int outputChannels)
     {
-        auto error = deviceManager.initialiseWithDefaultDevices (2, 0);
+        shutdown();
 
+        const auto error = deviceManager.initialise (inputChannels, outputChannels, nullptr, true);
         if (error.isNotEmpty())
             return false;
 
         deviceManager.addAudioCallback (this);
-        running.store (true);
+        running = true;
         return true;
     }
 
-    void AudioEngine::stop()
+    void AudioEngine::shutdown()
     {
-        if (! running.exchange (false))
-            return;
+        if (running)
+            deviceManager.removeAudioCallback (this);
 
-        deviceManager.removeAudioCallback (this);
-        deviceManager.closeAudioDevice();
-        ringBuffer.reset();
+        running = false;
+        analysisManager = nullptr;
+    }
+
+    void AudioEngine::setAnalysisManager (AnalysisManager* manager) noexcept
+    {
+        analysisManager = manager;
     }
 
     juce::String AudioEngine::getCurrentDeviceName() const
     {
         if (auto* device = deviceManager.getCurrentAudioDevice())
             return device->getName();
-
-        return "No Device";
+        return "No Audio Device";
     }
 
     void AudioEngine::audioDeviceAboutToStart (juce::AudioIODevice* device)
@@ -47,17 +49,14 @@ namespace automenu::audio
         if (device != nullptr)
         {
             sampleRate = device->getCurrentSampleRate();
-            blockSize = device->getCurrentBufferSizeSamples();
+            bufferSize = device->getCurrentBufferSizeSamples();
+            ringBuffer.prepare (device->getActiveInputChannels().countNumberOfSetBits(), (int) sampleRate * 8);
         }
-
-        monoScratch.resize ((size_t) juce::jmax (blockSize, 512));
-        ringBuffer.reset();
     }
 
     void AudioEngine::audioDeviceStopped()
     {
-        sampleRate = 48000.0;
-        blockSize = 512;
+        ringBuffer.clear();
     }
 
     void AudioEngine::audioDeviceIOCallbackWithContext (const float* const* inputChannelData,
@@ -71,20 +70,9 @@ namespace automenu::audio
             if (outputChannelData[ch] != nullptr)
                 juce::FloatVectorOperations::clear (outputChannelData[ch], numSamples);
 
-        if (numInputChannels <= 0 || inputChannelData == nullptr || inputChannelData[0] == nullptr)
-            return;
+        ringBuffer.push (inputChannelData, numInputChannels, numSamples);
 
-        if ((int) monoScratch.size() < numSamples)
-            monoScratch.resize ((size_t) numSamples);
-
-        juce::FloatVectorOperations::copy (monoScratch.data(), inputChannelData[0], numSamples);
-
-        if (numInputChannels > 1 && inputChannelData[1] != nullptr)
-        {
-            juce::FloatVectorOperations::add (monoScratch.data(), inputChannelData[1], numSamples);
-            juce::FloatVectorOperations::multiply (monoScratch.data(), 0.5f, numSamples);
-        }
-
-        ringBuffer.pushMono (monoScratch.data(), numSamples);
+        if (analysisManager != nullptr)
+            analysisManager->pushAudioBlock (inputChannelData, numInputChannels, numSamples, sampleRate);
     }
 }
