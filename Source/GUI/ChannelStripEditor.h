@@ -3,6 +3,9 @@
 #include "GUI/Components/TopBar.h"
 #include "GUI/Components/BottomMeterBar.h"
 #include "GUI/Components/ModulePanel.h"
+#include "GUI/Controls/PopupValue.h"
+#include "GUI/Controls/TooltipManager.h"
+#include "GUI/LookAndFeel/MainLookAndFeel.h"
 
 class VocalSuiteUltraProAudioProcessor;
 
@@ -21,6 +24,9 @@ private:
 
     TopBar topBar;
     BottomMeterBar bottomMeters;
+    PopupValue popupValue;
+    TooltipManager tooltipManager;
+    MainLookAndFeel mainLookAndFeel;
     juce::Label footer;
 
     juce::OwnedArray<ModulePanel> modules;

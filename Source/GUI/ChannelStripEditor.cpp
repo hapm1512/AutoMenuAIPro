@@ -1,66 +1,79 @@
 #include "ChannelStripEditor.h"
 #include "PluginProcessor.h"
 #include "GUI/Theme.h"
+#include "GUI/Layout/ChannelStripLayout.h"
 
 ChannelStripEditor::ChannelStripEditor (VocalSuiteUltraProAudioProcessor& p)
     : processor (p)
 {
+    setLookAndFeel (&mainLookAndFeel);
+
     addAndMakeVisible (topBar);
     addAndMakeVisible (bottomMeters);
+    addAndMakeVisible (popupValue);
+    addAndMakeVisible (tooltipManager);
 
-    footer.setText ("READY  |  GUI PRO MODE  |  PEAK HOLD METERS  |  DSP BYPASS SHELL  |  SPRINT 03 GUI PRO", juce::dontSendNotification);
+    footer.setText ("VOCAL SUITE ULTRA PRO  |  COMMERCIAL GUI REWRITE SPRINT 10  |  GUI LOCKED  |  DSP NEXT", juce::dontSendNotification);
     footer.setJustificationType (juce::Justification::centred);
     footer.setColour (juce::Label::textColourId, Theme::mutedText);
-    footer.setFont (Theme::bold (14.0f));
+    footer.setFont (Theme::bold (13.5f));
     addAndMakeVisible (footer);
 
     auto& pre = createModule ("PREAMP", "preampOn");
-    pre.addKnob ("DRIVE", "preampDrive", Theme::gold);
-    pre.addKnob ("HARMONIC", "preampHarmonic", Theme::gold);
-    pre.addKnob ("OUTPUT", "preampOutput", Theme::textBright);
-
-    auto& eq = createModule ("EQ", "eqOn");
-    eq.addKnob ("LOW", "eqLow", Theme::blue);
-    eq.addKnob ("MID", "eqMid", Theme::green);
-    eq.addKnob ("HIGH", "eqHigh", Theme::gold);
-    eq.addKnob ("AIR", "eqAir", Theme::purple);
+    pre.addKnob ("DRIVE", "preampDrive", Theme::red);
+    pre.addKnob ("TRIM", "preampOutput", Theme::textBright);
+    pre.addKnob ("HARM", "preampHarmonic", Theme::gold);
 
     auto& gate = createModule ("GATE", "gateOn");
-    gate.addKnob ("THRESHOLD", "gateThreshold", Theme::gold);
-    gate.addKnob ("RANGE", "gateRange", Theme::textBright);
-    gate.addKnob ("HYST", "gateHyst", Theme::green);
-    gate.addKnob ("HOLD", "gateHold", Theme::blue);
-    gate.addKnob ("RELEASE", "gateRelease", Theme::blue);
+    gate.addKnob ("THRESHOLD", "gateThreshold", Theme::purple);
+    gate.addKnob ("RANGE", "gateRange", Theme::purple);
+    gate.addKnob ("ATTACK", "gateAttack", Theme::purple);
+    gate.addKnob ("RELEASE", "gateRelease", Theme::purple);
+
+    auto& eq = createModule ("EQ", "eqOn");
+    eq.addKnob ("HIGH", "eqHigh", Theme::blue);
+    eq.addKnob ("MID", "eqMid", Theme::green);
+    eq.addKnob ("LOW", "eqLow", Theme::gold);
+    eq.addKnob ("AIR", "eqAir", Theme::purple);
 
     auto& de = createModule ("DE-ESSER", "deesserOn");
-    de.addKnob ("S FREQ", "deessFreq", Theme::purple);
-    de.addKnob ("THRESHOLD", "deessThreshold", Theme::gold);
+    de.addKnob ("FREQ", "deessFreq", Theme::blue);
+    de.addKnob ("THRESH", "deessThreshold", Theme::gold);
     de.addKnob ("RANGE", "deessRange", Theme::textBright);
-    de.addKnob ("LOOKAHEAD", "deessLookahead", Theme::blue);
     de.addKnob ("RELEASE", "deessRelease", Theme::green);
 
-    auto& comp = createModule ("COMPRESSOR", "compressorOn");
-    comp.addKnob ("INPUT", "compInput", Theme::textBright);
-    comp.addKnob ("OUTPUT", "compOutput", Theme::textBright);
-    comp.addKnob ("ATTACK", "compAttack", Theme::blue);
-    comp.addKnob ("RELEASE", "compRelease", Theme::green);
-    comp.addKnob ("PEAK REDUCTION", "compPeakReduction", Theme::gold);
-    comp.addKnob ("GAIN", "compGain", Theme::textBright);
+    auto& comp76 = createModule ("COMP 1176", "compressorOn");
+    comp76.addKnob ("RATIO", "compPeakReduction", Theme::blue);
+    comp76.addKnob ("ATTACK", "compAttack", Theme::gold);
+    comp76.addKnob ("RELEASE", "compRelease", Theme::gold);
+    comp76.addKnob ("INPUT", "compInput", Theme::blue);
+    comp76.addKnob ("OUTPUT", "compOutput", Theme::blue);
+
+    auto& comp2a = createModule ("COMP LA-2A", "compressorOn");
+    comp2a.addKnob ("PEAK RED", "compPeakReduction", Theme::gold);
+    comp2a.addKnob ("GAIN", "compGain", Theme::blue);
+    comp2a.addKnob ("MIX", "compOutput", Theme::purple);
 
     auto& sat = createModule ("SATURATION", "saturationOn");
     sat.addKnob ("DRIVE", "satDrive", Theme::gold);
-    sat.addKnob ("TONE", "satTone", Theme::red);
-    sat.addKnob ("MIX", "satMix", Theme::blue);
+    sat.addKnob ("TONE", "satTone", Theme::gold);
+    sat.addKnob ("MIX", "satMix", Theme::gold);
 
     auto& hi = createModule ("HI-END", "hiendOn");
-    hi.addKnob ("WARM", "hiWarm", Theme::red);
-    hi.addKnob ("WIDTH", "hiWidth", Theme::textBright);
-    hi.addKnob ("TAME", "hiTame", Theme::blue);
-    hi.addKnob ("GLUE", "hiGlue", Theme::purple);
+    hi.addKnob ("AIR", "hiWarm", Theme::blue);
+    hi.addKnob ("PRESENCE", "hiTame", Theme::textBright);
+    hi.addKnob ("BRIGHT", "hiGlue", Theme::blue);
+    hi.addKnob ("WIDTH", "hiWidth", Theme::blue);
+
+    auto& lim = createModule ("LIMITER", "outputOn");
+    lim.addKnob ("THRESH", "outThreshold", Theme::textBright);
+    lim.addKnob ("CEILING", "outCeiling", Theme::textBright);
+    lim.addKnob ("LOOK", "deessLookahead", Theme::textBright);
+    lim.addKnob ("REL", "gateRelease", Theme::textBright);
 
     auto& out = createModule ("OUTPUT", "outputOn");
-    out.addKnob ("CEILING", "outCeiling", Theme::gold);
-    out.addKnob ("THRESHOLD", "outThreshold", Theme::textBright);
+    out.addKnob ("OUT", "preampOutput", Theme::blue);
+    out.addKnob ("CEIL", "outCeiling", Theme::gold);
 
     startTimerHz (30);
 }
@@ -77,43 +90,86 @@ void ChannelStripEditor::paint (juce::Graphics& g)
 {
     auto r = getLocalBounds().toFloat();
 
-    juce::ColourGradient bg (Theme::bgTop, 0, 0, Theme::bgBottom, 0, (float) getHeight(), false);
-    bg.addColour (0.42, Theme::bgMid);
+    juce::ColourGradient bg (Theme::bgTop, 0, 0,
+                             Theme::bgBottom, 0, (float) getHeight(), false);
+    bg.addColour (0.28, Theme::bgMid);
+    bg.addColour (0.70, juce::Colour (0xff07090a));
     g.setGradientFill (bg);
     g.fillRoundedRectangle (r.reduced (5.0f), 10.0f);
 
     g.setColour (juce::Colour (0xff343434));
     g.drawRoundedRectangle (r.reduced (5.0f), 10.0f, 1.4f);
 
-    g.setColour (juce::Colour (0x18000000));
-    for (int i = 0; i < getWidth(); i += 24)
-        g.drawVerticalLine (i, 104.0f, (float) getHeight() - 152.0f);
+    auto layout = ChannelStripLayout::calculate (getLocalBounds());
 
-    g.setColour (Theme::gold.withAlpha (0.09f));
-    g.drawLine (16.0f, 103.0f, (float) getWidth() - 16.0f, 103.0f, 1.0f);
-    g.drawLine (16.0f, (float) getHeight() - 150.0f, (float) getWidth() - 16.0f, (float) getHeight() - 150.0f, 1.0f);
+    g.setColour (juce::Colour (0x18000000));
+    for (int i = 0; i < getWidth(); i += 22)
+        g.drawVerticalLine (i, (float) layout.moduleArea.getY() - 8.0f, (float) layout.meterBar.getY() - 8.0f);
+
+    g.setColour (juce::Colour (0x09000000));
+    for (int y = layout.moduleArea.getY(); y < layout.meterBar.getY() - 8; y += 18)
+        g.drawHorizontalLine (y, 16.0f, (float) getWidth() - 16.0f);
+
+    auto tabs = layout.modeTabs.reduced (8, 12);
+    auto tab1 = tabs.removeFromLeft (150);
+    tabs.removeFromLeft (20);
+    auto tab2 = tabs.removeFromLeft (130);
+
+    g.setColour (juce::Colour (0xff241832));
+    g.fillRoundedRectangle (tab1.toFloat(), 5.0f);
+    g.setColour (Theme::purple.withAlpha (0.74f));
+    g.drawRoundedRectangle (tab1.toFloat(), 5.0f, 1.0f);
+    g.setColour (Theme::textBright);
+    g.setFont (Theme::bold (15.0f));
+    g.drawText ("CHANNEL STRIP", tab1, juce::Justification::centred);
+
+    g.setColour (juce::Colour (0xff151718));
+    g.fillRoundedRectangle (tab2.toFloat(), 5.0f);
+    g.setColour (Theme::panelLine);
+    g.drawRoundedRectangle (tab2.toFloat(), 5.0f, 1.0f);
+    g.setColour (Theme::text);
+    g.drawText ("ADVANCED", tab2, juce::Justification::centred);
+
+    auto side = juce::Rectangle<int> (getWidth() - 470, layout.modeTabs.getY() + 19, 340, 38);
+    g.setColour (juce::Colour (0xff0b0c0d));
+    g.fillRoundedRectangle (side.toFloat(), 5.0f);
+    g.setColour (Theme::panelLine);
+    g.drawRoundedRectangle (side.toFloat(), 5.0f, 1.0f);
+
+    g.setColour (Theme::text);
+    g.setFont (Theme::regular (13.0f));
+    g.drawText ("SIDE CHAIN     Int. Sidechain", side.reduced (12, 0), juce::Justification::centredLeft);
+
+    Theme::drawSmallLed (g, juce::Rectangle<float> ((float) side.getRight() - 22.0f, (float) side.getY() + 14.0f, 10.0f, 10.0f),
+                         true, Theme::green);
+
+    g.setColour (Theme::gold.withAlpha (0.08f));
+    g.drawLine (16.0f, (float) layout.moduleArea.getY() - 6.0f,
+                (float) getWidth() - 16.0f, (float) layout.moduleArea.getY() - 6.0f, 1.0f);
+    g.drawLine (16.0f, (float) getHeight() - 170.0f,
+                (float) getWidth() - 16.0f, (float) getHeight() - 170.0f, 1.0f);
 }
 
 void ChannelStripEditor::resized()
 {
-    auto r = getLocalBounds().reduced (10);
+    auto layout = ChannelStripLayout::calculate (getLocalBounds());
 
-    topBar.setBounds (r.removeFromTop (96));
+    topBar.setBounds (layout.topBar);
+    footer.setBounds (layout.footer);
+    bottomMeters.setBounds (layout.meterBar);
 
-    auto meterArea = r.removeFromBottom (145);
-    footer.setBounds (meterArea.removeFromBottom (32));
-    bottomMeters.setBounds (meterArea.reduced (0, 4));
-
-    auto moduleArea = r.reduced (0, 7);
-    const int gap = 6;
-    int widths[] = { 184, 169, 171, 176, 248, 169, 160, 169 };
+    auto moduleArea = layout.moduleArea;
+    const int gap = 5;
+    auto widths = ChannelStripLayout::moduleWidths();
 
     for (int i = 0; i < modules.size(); ++i)
     {
-        const int w = widths[i];
-        modules[i]->setBounds (moduleArea.removeFromLeft (w));
+        modules[i]->setBounds (moduleArea.removeFromLeft (widths[(size_t) i]));
         moduleArea.removeFromLeft (gap);
     }
+
+    popupValue.toFront (false);
+    tooltipManager.toFront (false);
 }
 
 void ChannelStripEditor::timerCallback()

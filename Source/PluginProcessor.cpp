@@ -70,4 +70,7 @@ float VocalSuiteUltraProAudioProcessor::getGainReduction() const noexcept
     return dsp.getGainReduction();
 }
 
-
+juce::AudioProcessor* createPluginFilter()
+{
+    return new VocalSuiteUltraProAudioProcessor();
+}

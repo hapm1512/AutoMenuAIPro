@@ -1,6 +1,1 @@
-#include "PluginProcessor.h"
-
-juce::AudioProcessor* createPluginFilter()
-{
-    return new VocalSuiteUltraProAudioProcessor();
-}
+// Not used. Entry point is in PluginProcessor.cpp.

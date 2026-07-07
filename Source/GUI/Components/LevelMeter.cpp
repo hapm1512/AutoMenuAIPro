@@ -4,7 +4,14 @@
 void LevelMeter::setLevel (float value)
 {
     level = juce::jlimit (0.0f, 1.0f, value);
-    peakHold = juce::jmax (level, peakHold * 0.965f);
+    peakHold = juce::jmax (level, peakHold * 0.974f);
+    rmsGhost = rmsGhost * 0.92f + level * 0.08f;
+
+    if (level > 0.96f)
+        clipHold = 1.0f;
+    else
+        clipHold *= 0.95f;
+
     repaint();
 }
 
@@ -12,52 +19,74 @@ void LevelMeter::paint (juce::Graphics& g)
 {
     auto r = getLocalBounds().toFloat();
 
-    g.setColour (juce::Colour (0xff050505));
+    g.setColour (juce::Colour (0xff030404));
     g.fillRoundedRectangle (r, 4.0f);
 
-    g.setColour (juce::Colour (0xff242424));
+    g.setColour (juce::Colour (0xff292929));
     g.drawRoundedRectangle (r.reduced (0.5f), 4.0f, 1.0f);
 
-    constexpr int bars = 52;
+    auto meter = r.reduced (7.0f, 10.0f);
+    constexpr int bars = 64;
     const float gap = 2.0f;
-    const float bw = (r.getWidth() - gap * (bars - 1)) / bars;
+    const float bw = (meter.getWidth() - gap * (bars - 1)) / bars;
+
     const int active = juce::roundToInt (level * bars);
     const int peak = juce::roundToInt (peakHold * bars);
+    const int rms = juce::roundToInt (rmsGhost * bars);
 
     for (int i = 0; i < bars; ++i)
     {
-        auto br = juce::Rectangle<float> (r.getX() + i * (bw + gap),
-                                          r.getY() + 6.0f,
+        auto br = juce::Rectangle<float> (meter.getX() + i * (bw + gap),
+                                          meter.getY(),
                                           bw,
-                                          r.getHeight() - 12.0f);
+                                          meter.getHeight() - 10.0f);
 
         if (i < active)
         {
-            if (i > bars * 0.88f)      g.setColour (Theme::red);
-            else if (i > bars * 0.72f) g.setColour (Theme::gold);
+            if (i > bars * 0.92f)      g.setColour (Theme::red.brighter (0.12f));
+            else if (i > bars * 0.76f) g.setColour (Theme::gold);
+            else if (i > bars * 0.58f) g.setColour (Theme::amber);
             else                       g.setColour (Theme::green);
         }
         else
         {
-            g.setColour (juce::Colour (0xff121812));
+            g.setColour (juce::Colour (0xff0d140f));
         }
 
-        g.fillRoundedRectangle (br, 1.5f);
+        g.fillRoundedRectangle (br, 1.3f);
+    }
+
+    if (rms > 0)
+    {
+        const int idx = juce::jlimit (0, bars - 1, rms - 1);
+        const float x = meter.getX() + idx * (bw + gap);
+
+        g.setColour (Theme::blue.withAlpha (0.78f));
+        g.fillRoundedRectangle (juce::Rectangle<float> (x, meter.getY() + 2.0f,
+                                                       bw + 1.2f, meter.getHeight() - 14.0f), 1.0f);
     }
 
     if (peak > 0)
     {
-        const float x = r.getX() + juce::jlimit (0, bars - 1, peak - 1) * (bw + gap);
-        auto hold = juce::Rectangle<float> (x, r.getY() + 4.0f, bw + 1.0f, r.getHeight() - 8.0f);
-        g.setColour (peakHold > 0.88f ? Theme::red.brighter (0.3f) : Theme::textBright);
-        g.fillRoundedRectangle (hold, 1.0f);
+        const int idx = juce::jlimit (0, bars - 1, peak - 1);
+        const float x = meter.getX() + idx * (bw + gap);
+
+        g.setColour (peakHold > 0.92f ? Theme::red.brighter (0.55f) : Theme::textBright);
+        g.fillRoundedRectangle (juce::Rectangle<float> (x, meter.getY() - 2.0f,
+                                                       bw + 1.2f, meter.getHeight() - 6.0f), 1.0f);
+    }
+
+    if (clipHold > 0.02f)
+    {
+        auto clip = juce::Rectangle<float> (r.getRight() - 20.0f, r.getY() + 5.0f, 12.0f, 12.0f);
+        Theme::drawSmallLed (g, clip, true, Theme::red.withAlpha (clipHold));
     }
 
     g.setColour (juce::Colour (0x18ffffff));
-    g.fillRoundedRectangle (r.withHeight (r.getHeight() * 0.35f).reduced (2.0f), 3.0f);
+    g.fillRoundedRectangle (r.withHeight (r.getHeight() * 0.34f).reduced (3.0f), 3.0f);
 
-    g.setColour (Theme::mutedText.withAlpha (0.5f));
-    g.setFont (Theme::regular (9.0f));
-    g.drawText ("-60        -24        -12        -6        0", r.reduced (6, 0),
-                juce::Justification::centredBottom);
+    g.setColour (Theme::mutedText.withAlpha (0.54f));
+    g.setFont (Theme::regular (8.6f));
+    g.drawText ("-60       -48       -36       -24       -18       -12       -6    0",
+                r.reduced (8, 0), juce::Justification::centredBottom);
 }

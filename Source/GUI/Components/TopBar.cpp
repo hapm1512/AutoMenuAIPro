@@ -12,28 +12,39 @@ TopBar::TopBar()
         addAndMakeVisible (l);
     };
 
-    setupLabel (title, "VOCAL SUITE", 29.0f, Theme::textBright);
-    setupLabel (subtitle, "ULTRA PRO", 23.0f, Theme::gold);
-    setupLabel (preset, "Modern Vocal - Clean & Wide", 20.0f, juce::Colour (0xffe5c875));
-    setupLabel (version, "v0.3 GUI PRO", 11.0f, Theme::mutedText);
-    setupLabel (status, "48 kHz  •  128 Samples  •  CPU 0.8%  •  OS 1x", 12.0f, Theme::mutedText);
+    setupLabel (title, "VOCAL SUITE", 25.0f, Theme::textBright);
+    setupLabel (subtitle, "ULTRA PRO", 19.0f, Theme::purple.brighter (0.38f));
+    setupLabel (preset, "Modern Vocal Pop", 18.0f, juce::Colour (0xfff4f4f4));
+    setupLabel (version, "VS", 35.0f, Theme::purple.brighter (0.25f));
+    setupLabel (status, "48 kHz  •  128 Samples  •  0 smp  •  CPU 0.8%  •  OS 1x  •  HQ", 11.0f, Theme::mutedText);
+
     preset.setJustificationType (juce::Justification::centred);
-    version.setJustificationType (juce::Justification::centredLeft);
     status.setJustificationType (juce::Justification::centredRight);
 
     for (auto* x : { &prev, &next, &favorite, &save, &category, &a, &b, &copy, &undo, &redo, &settings, &help, &bypass })
     {
-        x->setColour (juce::TextButton::buttonColourId, juce::Colour (0xff111111));
+        x->setColour (juce::TextButton::buttonColourId, juce::Colour (0xff111213));
         x->setColour (juce::TextButton::buttonOnColourId, Theme::gold);
         x->setColour (juce::TextButton::textColourOffId, Theme::text);
         x->setColour (juce::TextButton::textColourOnId, juce::Colours::black);
         addAndMakeVisible (*x);
     }
 
-    a.setClickingTogglesState (true);
-    b.setClickingTogglesState (true);
-    a.setToggleState (true, juce::dontSendNotification);
+    prev.setButtonText ("‹");
+    next.setButtonText ("›");
+    favorite.setButtonText ("★");
+    save.setButtonText ("SAVE");
+    category.setButtonText ("VOCAL");
+    settings.setButtonText ("⚙");
+    help.setButtonText ("?");
+    bypass.setButtonText ("BYPASS");
+
+    a.setButtonText ("A / B");
+    b.setVisible (false);
+    copy.setButtonText ("A > B");
+
     favorite.setClickingTogglesState (true);
+    favorite.setToggleState (true, juce::dontSendNotification);
     bypass.setClickingTogglesState (true);
     bypass.setColour (juce::TextButton::buttonOnColourId, juce::Colour (0xff7c1e1e));
     bypass.setColour (juce::TextButton::textColourOnId, juce::Colours::white);
@@ -42,66 +53,97 @@ TopBar::TopBar()
 void TopBar::paint (juce::Graphics& g)
 {
     auto r = getLocalBounds().toFloat().reduced (2.0f);
-    g.setColour (juce::Colour (0x77000000));
-    g.fillRoundedRectangle (r.translated (0.0f, 2.0f), 8.0f);
 
-    juce::ColourGradient grad (juce::Colour (0xff1c1d1d), r.getX(), r.getY(),
-                               juce::Colour (0xff090a0a), r.getX(), r.getBottom(), false);
+    g.setColour (juce::Colour (0xc3000000));
+    g.fillRoundedRectangle (r.translated (0.0f, 2.0f), 7.0f);
+
+    juce::ColourGradient grad (juce::Colour (0xff1d1f20), r.getX(), r.getY(),
+                               juce::Colour (0xff070808), r.getX(), r.getBottom(), false);
+    grad.addColour (0.42, juce::Colour (0xff111314));
     g.setGradientFill (grad);
-    g.fillRoundedRectangle (r, 8.0f);
+    g.fillRoundedRectangle (r, 7.0f);
 
-    g.setColour (juce::Colour (0xff353535));
-    g.drawRoundedRectangle (r, 8.0f, 1.0f);
+    g.setColour (juce::Colour (0xff2d3031));
+    g.drawRoundedRectangle (r, 7.0f, 1.0f);
 
-    juce::Path logo;
-    logo.startNewSubPath (25, 18);
-    logo.lineTo (65, 78);
-    logo.lineTo (105, 18);
-    logo.lineTo (90, 18);
-    logo.lineTo (65, 56);
-    logo.lineTo (40, 18);
-    logo.closeSubPath();
+    auto logoBox = juce::Rectangle<float> (32.0f, 11.0f, 62.0f, 46.0f);
+    g.setColour (Theme::purple.withAlpha (0.14f));
+    g.fillEllipse (logoBox.expanded (12.0f));
+    g.setColour (Theme::purple.withAlpha (0.26f));
+    g.fillRoundedRectangle (logoBox, 7.0f);
+    g.setColour (Theme::purple.withAlpha (0.62f));
+    g.drawRoundedRectangle (logoBox, 7.0f, 1.0f);
 
-    g.setColour (Theme::gold.withAlpha (0.18f));
-    g.strokePath (logo, juce::PathStrokeType (8.0f));
+    juce::Path v;
+    v.startNewSubPath (logoBox.getX() + 12.0f, logoBox.getY() + 10.0f);
+    v.lineTo (logoBox.getCentreX(), logoBox.getBottom() - 10.0f);
+    v.lineTo (logoBox.getRight() - 12.0f, logoBox.getY() + 10.0f);
     g.setColour (Theme::textBright);
-    g.strokePath (logo, juce::PathStrokeType (3.0f));
+    g.strokePath (v, juce::PathStrokeType (3.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
-    auto p = juce::Rectangle<int> (418, 13, 570, 47).toFloat();
-    g.setColour (juce::Colour (0xff080909));
-    g.fillRoundedRectangle (p, 5.0f);
-    g.setColour (Theme::gold.withAlpha (0.55f));
-    g.drawRoundedRectangle (p, 5.0f, 1.0f);
+    auto presetBox = juce::Rectangle<int> (515, 12, 360, 46).toFloat();
 
-    g.setColour (Theme::mutedText);
-    g.setFont (Theme::regular (10.0f));
-    g.drawText ("PRESET BROWSER", p.withTrimmedBottom (26.0f), juce::Justification::centred);
+    g.setColour (juce::Colour (0xff050606));
+    g.fillRoundedRectangle (presetBox, 6.0f);
+    g.setColour (Theme::panelLine);
+    g.drawRoundedRectangle (presetBox, 6.0f, 1.0f);
 
-    Theme::drawSmallLed (g, juce::Rectangle<float> (1168.0f, 24.0f, 9.0f, 9.0f), true, Theme::green);
-    Theme::drawSmallLed (g, juce::Rectangle<float> (1168.0f, 45.0f, 9.0f, 9.0f), false, Theme::red);
+    g.setColour (juce::Colour (0x18ffffff));
+    g.fillRoundedRectangle (presetBox.withHeight (presetBox.getHeight() * 0.38f).reduced (1.0f), 5.0f);
+
+    g.setColour (Theme::mutedText.withAlpha (0.62f));
+    g.setFont (Theme::regular (8.8f));
+    g.drawText ("PRESET", presetBox.withTrimmedBottom (27.0f).reduced (12, 0), juce::Justification::centredLeft);
+
+    g.setColour (Theme::gold);
+    g.setFont (Theme::bold (22.0f));
+    g.drawText ("★", presetBox.removeFromRight (48.0f), juce::Justification::centred);
+
+    auto cpuBox = juce::Rectangle<float> (1095.0f, 15.0f, 66.0f, 42.0f);
+    g.setColour (juce::Colour (0xff0b0d0e));
+    g.fillRoundedRectangle (cpuBox, 5.0f);
+    g.setColour (Theme::green.withAlpha (0.44f));
+    g.drawRoundedRectangle (cpuBox, 5.0f, 1.0f);
+    g.setColour (Theme::green);
+    g.setFont (Theme::bold (12.0f));
+    g.drawText ("CPU", cpuBox.withTrimmedBottom (18.0f), juce::Justification::centred);
+    g.setColour (Theme::textBright);
+    g.drawText ("0.8%", cpuBox.withTrimmedTop (17.0f), juce::Justification::centred);
+
+    auto hqBox = juce::Rectangle<float> (1166.0f, 15.0f, 42.0f, 42.0f);
+    g.setColour (juce::Colour (0xff0b0d0e));
+    g.fillRoundedRectangle (hqBox, 5.0f);
+    g.setColour (Theme::gold.withAlpha (0.45f));
+    g.drawRoundedRectangle (hqBox, 5.0f, 1.0f);
+    g.setColour (Theme::gold);
+    g.setFont (Theme::bold (14.0f));
+    g.drawText ("HQ", hqBox, juce::Justification::centred);
+
+    g.setColour (Theme::mutedText.withAlpha (0.55f));
+    g.drawVerticalLine (815, 18.0f, 52.0f);
 }
 
 void TopBar::resized()
 {
-    title.setBounds (112, 7, 245, 37);
-    subtitle.setBounds (112, 45, 220, 32);
-    version.setBounds (270, 51, 140, 22);
-    status.setBounds (1000, 60, 260, 24);
+    version.setBounds (34, 10, 70, 50);
+    title.setBounds (118, 11, 180, 32);
+    subtitle.setBounds (305, 13, 135, 30);
+    status.setBounds (910, 49, 260, 20);
 
-    prev.setBounds (424, 19, 38, 35);
-    category.setBounds (466, 19, 74, 35);
-    preset.setBounds (544, 20, 330, 33);
-    favorite.setBounds (879, 19, 38, 35);
-    save.setBounds (920, 19, 62, 35);
-    next.setBounds (991, 19, 38, 35);
+    prev.setBounds (518, 18, 38, 34);
+    preset.setBounds (558, 19, 255, 32);
+    next.setBounds (836, 18, 34, 34);
 
-    a.setBounds (500, 66, 55, 26);
-    b.setBounds (558, 66, 55, 26);
-    copy.setBounds (625, 66, 75, 26);
-    undo.setBounds (750, 66, 82, 26);
-    redo.setBounds (835, 66, 82, 26);
+    a.setBounds (910, 15, 78, 42);
+    copy.setBounds (995, 15, 82, 42);
 
-    settings.setBounds (1190, 20, 90, 70);
-    help.setBounds (1295, 20, 90, 70);
-    bypass.setBounds (1425, 20, 95, 70);
+    undo.setBounds (1216, 15, 50, 42);
+    redo.setBounds (1268, 15, 50, 42);
+    settings.setBounds (1330, 15, 50, 42);
+    help.setBounds (1382, 15, 50, 42);
+    bypass.setBounds (1446, 15, 80, 42);
+
+    favorite.setBounds (0, 0, 0, 0);
+    save.setBounds (0, 0, 0, 0);
+    category.setBounds (0, 0, 0, 0);
 }

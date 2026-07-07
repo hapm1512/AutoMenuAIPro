@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (NOT DEFINED JUCE_DIR)
-    set(JUCE_DIR "D:/JUCE8")
+    set(JUCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../JUCE")
 endif()
 
 add_subdirectory(${JUCE_DIR} JUCE)
@@ -26,13 +26,14 @@ juce_add_plugin(VocalSuiteUltraPro
     COPY_PLUGIN_AFTER_BUILD FALSE
 )
 
-set(VSUP_SOURCES
-    Source/PluginEntry.cpp
+juce_generate_juce_header(VocalSuiteUltraPro)
+
+target_sources(VocalSuiteUltraPro
+PRIVATE
     Source/PluginProcessor.cpp
     Source/PluginEditor.cpp
 
     Source/Parameters/ParameterLayout.cpp
-
     Source/Core/PluginState.cpp
 
     Source/GUI/Theme.cpp
@@ -42,6 +43,9 @@ set(VSUP_SOURCES
     Source/GUI/Components/LevelMeter.cpp
     Source/GUI/Components/TopBar.cpp
     Source/GUI/Components/BottomMeterBar.cpp
+    Source/GUI/Controls/PopupValue.cpp
+    Source/GUI/Controls/TooltipManager.cpp
+    Source/GUI/LookAndFeel/MainLookAndFeel.cpp
 
     Source/DSP/Engine/DspEngine.cpp
     Source/DSP/PreampModule.cpp
@@ -54,18 +58,17 @@ set(VSUP_SOURCES
     Source/DSP/OutputModule.cpp
 )
 
-target_sources(VocalSuiteUltraPro PRIVATE ${VSUP_SOURCES})
-
-juce_generate_juce_header(VocalSuiteUltraPro)
-
 target_include_directories(VocalSuiteUltraPro
 PRIVATE
     Source
     Source/Core
-    Source/GUI
-    Source/GUI/Components
     Source/DSP
     Source/DSP/Engine
+    Source/GUI
+    Source/GUI/Components
+    Source/GUI/Controls
+    Source/GUI/Layout
+    Source/GUI/LookAndFeel
     Source/Parameters
 )
 

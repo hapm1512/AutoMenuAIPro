@@ -27,4 +27,12 @@ private:
     juce::Label peakLabel;
     juce::Label clipInLabel;
     juce::Label clipOutLabel;
+
+    juce::Label lufsShortLabel;
+    juce::Label momentaryLabel;
+    juce::Label corrLabel;
+    juce::TextButton monoButton { "MONO" };
+    juce::TextButton stereoButton { "STEREO" };
+    juce::TextButton midButton { "MID" };
+    juce::TextButton sideButton { "SIDE" };
 };
