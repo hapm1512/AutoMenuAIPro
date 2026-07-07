@@ -3,41 +3,91 @@
 
 Dashboard::Dashboard()
 {
-    setSize (AppTheme::windowWidth, AppTheme::windowHeight);
+    setSize (1080, 520);
 
     addAndMakeVisible (header);
     addAndMakeVisible (macroPanel);
     addAndMakeVisible (mixerPanel);
     addAndMakeVisible (toneDetector);
     addAndMakeVisible (footer);
-    addAndMakeVisible (outputMeter);
+    addAndMakeVisible (settingsPanel);
+
+    settingsPanel.setVisible (false);
+
+    footer.onSettings = [this]
+    {
+        toggleSettings();
+    };
+
+    settingsPanel.onClose = [this]
+    {
+        showSettings (false);
+    };
+
+    settingsPanel.onSave = [this]
+    {
+        showSettings (false);
+    };
 }
 
 void Dashboard::paint (juce::Graphics& g)
 {
     g.fillAll (AppTheme::background());
+
+    if (settingsVisible)
+    {
+        g.setColour (juce::Colours::black.withAlpha (0.22f));
+        g.fillRect (getLocalBounds());
+    }
 }
 
 void Dashboard::resized()
 {
     auto r = getLocalBounds().reduced (8);
 
-    header.setBounds (r.removeFromTop (50));
-    r.removeFromTop (8);
+    headerArea = r.removeFromTop (38);
+    header.setBounds (headerArea);
 
-    auto bottom = r.removeFromBottom (106);
-    r.removeFromBottom (8);
+    r.removeFromTop (6);
 
-    auto right = r.removeFromRight (310);
-    r.removeFromRight (8);
+    auto left = r;
+    auto right = left.removeFromRight (280);
+    left.removeFromRight (6);
 
-    macroPanel.setBounds (r.removeFromTop (230));
-    r.removeFromTop (8);
-    mixerPanel.setBounds (r);
+    macroArea = left.removeFromTop (176);
+    macroPanel.setBounds (macroArea);
 
-    outputMeter.setBounds (bottom.removeFromRight (310));
-    bottom.removeFromRight (8);
-    footer.setBounds (bottom);
+    left.removeFromTop (6);
 
-    toneDetector.setBounds (right);
+    statusArea = left.removeFromBottom (24);
+    footer.setBounds (statusArea);
+
+    left.removeFromBottom (6);
+
+    mixerArea = left;
+    mixerPanel.setBounds (mixerArea);
+
+    toneArea = right;
+    toneDetector.setBounds (toneArea);
+
+    settingsArea = getLocalBounds()
+        .removeFromRight (360)
+        .reduced (8, 50)
+        .withTrimmedBottom (2);
+
+    settingsPanel.setBounds (settingsArea);
+    settingsPanel.toFront (false);
+}
+
+void Dashboard::toggleSettings()
+{
+    showSettings (! settingsVisible);
+}
+
+void Dashboard::showSettings (bool shouldShow)
+{
+    settingsVisible = shouldShow;
+    settingsPanel.setVisible (settingsVisible);
+    settingsPanel.toFront (true);
+    repaint();
 }

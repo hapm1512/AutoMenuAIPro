@@ -21,6 +21,7 @@ target_sources(AutoMenuAIPro PRIVATE
 
     UI/Dashboard/Dashboard.cpp
     UI/Theme/AppTheme.cpp
+    UI/Settings/SettingsPanel.cpp
 
     UI/Header/HeaderComponent.cpp
     UI/Panels/MacroPanel/MacroPanelComponent.cpp
@@ -41,6 +42,7 @@ target_include_directories(AutoMenuAIPro PRIVATE
     UI/Panels/TonePanel
     UI/Panels/OutputMeterPanel
     UI/Footer
+    UI/Settings
 )
 
 target_link_libraries(AutoMenuAIPro PRIVATE

@@ -1,37 +1,73 @@
 #include "FooterComponent.h"
 #include "../Theme/AppTheme.h"
 
-FooterComponent::FooterComponent() {}
+FooterComponent::FooterComponent()
+{
+    setInterceptsMouseClicks (true, true);
+}
 
 void FooterComponent::paint (juce::Graphics& g)
 {
     auto area = getLocalBounds();
+
     g.setColour (AppTheme::panel());
-    g.fillRoundedRectangle (area.toFloat(), 10.0f);
+    g.fillRoundedRectangle (area.toFloat(), 8.0f);
+
     g.setColour (AppTheme::border());
-    g.drawRoundedRectangle (area.toFloat(), 10.0f, 1.0f);
+    g.drawRoundedRectangle (area.toFloat(), 8.0f, 1.0f);
 
-    auto title = area.removeFromTop (34).reduced (18, 0);
+    auto r = area.reduced (10, 0);
+
+    settingsButtonArea = r.removeFromLeft (92).reduced (0, 4);
+
+    g.setColour (AppTheme::panelDark().interpolatedWith (AppTheme::purple(), 0.20f));
+    g.fillRoundedRectangle (settingsButtonArea.toFloat(), 6.0f);
+
+    g.setColour (AppTheme::purple());
+    g.drawRoundedRectangle (settingsButtonArea.toFloat(), 6.0f, 1.1f);
+
     g.setColour (AppTheme::text());
-    g.setFont (juce::Font (14.0f, juce::Font::bold));
-    g.drawText ("FOOTER", title, juce::Justification::centredLeft);
+    g.setFont (juce::Font (11.5f, juce::Font::bold));
+    g.drawText ("SETTINGS", settingsButtonArea, juce::Justification::centred);
 
-    auto row = area.reduced (18, 10);
-    juce::StringArray labels { "SETTINGS", "TEMPLATE", "SHORTCUT", "120.0 BPM", "4/4 TIME", "C Maj KEY", "CPU 12%" };
-    int widths[] = { 120, 120, 120, 95, 95, 95, 115 };
+    r.removeFromLeft (12);
 
-    for (int i = 0; i < labels.size(); ++i)
-    {
-        auto b = row.removeFromLeft (widths[i]);
-        row.removeFromLeft (12);
-        g.setColour (i < 3 ? AppTheme::panelDark() : AppTheme::panel());
-        g.fillRoundedRectangle (b.toFloat(), 6.0f);
-        g.setColour (i < 3 ? AppTheme::border() : juce::Colours::transparentBlack);
-        g.drawRoundedRectangle (b.toFloat(), 6.0f, 1.0f);
-        g.setColour (AppTheme::text());
-        g.setFont (juce::Font (10.5f, juce::Font::bold));
-        g.drawText (labels[i], b, juce::Justification::centred);
-    }
+    g.setColour (AppTheme::subText());
+    g.setFont (juce::Font (10.8f));
+    g.drawText ("Template: Live Vocal", r.removeFromLeft (138), juce::Justification::centredLeft);
+
+    g.setColour (AppTheme::border());
+    g.drawVerticalLine (r.getX(), 6.0f, (float) area.getBottom() - 6.0f);
+    r.removeFromLeft (12);
+
+    g.setColour (AppTheme::subText());
+    g.drawText ("Shortcut: Analyze / Send Cubase / Export", r.removeFromLeft (245), juce::Justification::centredLeft);
+
+    g.setColour (AppTheme::border());
+    g.drawVerticalLine (r.getX(), 6.0f, (float) area.getBottom() - 6.0f);
+    r.removeFromLeft (12);
+
+    g.setColour (AppTheme::green());
+    g.fillEllipse (r.removeFromLeft (9).withSizeKeepingCentre (7, 7).toFloat());
+    r.removeFromLeft (7);
+
+    g.setColour (AppTheme::green());
+    g.setFont (juce::Font (10.8f, juce::Font::bold));
+    g.drawText ("Cubase Connected", r.removeFromLeft (126), juce::Justification::centredLeft);
+
+    g.setColour (AppTheme::subText());
+    g.drawText ("loopMIDI   48kHz   CPU 4%", r, juce::Justification::centredRight);
 }
 
-void FooterComponent::resized() {}
+void FooterComponent::resized()
+{
+}
+
+void FooterComponent::mouseUp (const juce::MouseEvent& event)
+{
+    if (settingsButtonArea.contains (event.getPosition()))
+    {
+        if (onSettings)
+            onSettings();
+    }
+}

@@ -1,15 +1,17 @@
 #include "MainWindow.h"
-#include "../UI/Theme/AppTheme.h"
 
 MainWindow::MainWindow()
     : DocumentWindow ("AutoMenuAIPro",
-                      juce::Colour::fromRGB (31, 43, 48),
-                      DocumentWindow::minimiseButton | DocumentWindow::closeButton)
+                      juce::Colours::black,
+                      DocumentWindow::closeButton)
 {
     setUsingNativeTitleBar (false);
-    setResizable (false, false);
+    setResizable (true, true);
+
     setContentOwned (new Dashboard(), true);
-    centreWithSize (AppTheme::windowWidth, AppTheme::windowHeight);
+
+    setResizeLimits (980, 500, 1280, 720);
+    centreWithSize (1100, 540);
     setVisible (true);
 }
 

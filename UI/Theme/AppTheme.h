@@ -1,23 +1,28 @@
 #pragma once
-
 #include <juce_gui_extra/juce_gui_extra.h>
 
 namespace AppTheme
 {
-    static constexpr int windowWidth  = 1120;
-    static constexpr int windowHeight = 640;
+    constexpr float scale = 0.85f;
 
-    juce::Colour background();
-    juce::Colour titleBar();
-    juce::Colour panel();
-    juce::Colour panelDark();
-    juce::Colour border();
-    juce::Colour text();
-    juce::Colour subText();
-    juce::Colour purple();
-    juce::Colour blue();
-    juce::Colour green();
-    juce::Colour yellow();
-    juce::Colour red();
-    juce::Colour orange();
+    inline int sx (int v) { return (int) std::round ((float) v * scale); }
+
+    constexpr int windowWidth  = 1100;
+    constexpr int windowHeight = 560;
+    constexpr int minWidth     = 980;
+    constexpr int minHeight    = 500;
+    constexpr int maxWidth     = 1280;
+    constexpr int maxHeight    = 720;
+
+    const juce::Colour background();
+    const juce::Colour panel();
+    const juce::Colour panelDark();
+    const juce::Colour border();
+    const juce::Colour text();
+    const juce::Colour subText();
+    const juce::Colour purple();
+    const juce::Colour blue();
+    const juce::Colour green();
+    const juce::Colour red();
+    const juce::Colour yellow();
 }

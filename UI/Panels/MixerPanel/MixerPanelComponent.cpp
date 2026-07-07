@@ -4,13 +4,13 @@
 MixerPanelComponent::MixerPanelComponent()
 {
     knobs = {
-        { "Nhac", 70, AppTheme::green()  },
-        { "Mic",  65, AppTheme::green()  },
-        { "Vang Dai", 55, AppTheme::purple() },
-        { "Vang Ngan", 45, AppTheme::yellow() },
-        { "Delay", 35, AppTheme::blue()   },
-        { "Tune", 60, AppTheme::purple() },
-        { "Flex", 40, AppTheme::blue()   }
+        { "Nhac", "70", AppTheme::green(), 0.70f },
+        { "Mic", "82", AppTheme::green(), 0.82f },
+        { "Vang Dai", "45", AppTheme::blue(), 0.45f },
+        { "Vang Ngan", "38", AppTheme::blue(), 0.38f },
+        { "Delay", "32", AppTheme::purple(), 0.32f },
+        { "Tune", "64", AppTheme::purple(), 0.64f },
+        { "Flex", "50", AppTheme::yellow(), 0.50f },
     };
 }
 
@@ -18,69 +18,56 @@ void MixerPanelComponent::paint (juce::Graphics& g)
 {
     auto area = getLocalBounds();
     g.setColour (AppTheme::panel());
-    g.fillRoundedRectangle (area.toFloat(), 10.0f);
+    g.fillRoundedRectangle (area.toFloat(), 8.0f);
     g.setColour (AppTheme::border());
-    g.drawRoundedRectangle (area.toFloat(), 10.0f, 1.0f);
+    g.drawRoundedRectangle (area.toFloat(), 8.0f, 1.0f);
 
-    auto title = area.removeFromTop (38).reduced (18, 0);
+    auto title = area.removeFromTop (30).reduced (16, 0);
     g.setColour (AppTheme::text());
-    g.setFont (juce::Font (14.0f, juce::Font::bold));
+    g.setFont (juce::Font (12.5f, juce::Font::bold));
     g.drawText ("MIX & EFFECT CONTROL", title, juce::Justification::centredLeft);
 
-    auto grid = area.reduced (18, 10);
+    auto grid = area.reduced (14, 8);
     const int count = (int) knobs.size();
-    const int cellW = grid.getWidth() / count;
+    const int gap = 8;
+    const int w = (grid.getWidth() - gap * (count - 1)) / count;
 
     for (int i = 0; i < count; ++i)
     {
-        auto cell = juce::Rectangle<int> (grid.getX() + i * cellW, grid.getY(), cellW, grid.getHeight()).reduced (6, 0);
-        drawKnob (g, cell, knobs[(size_t) i]);
-
-        if (i > 0)
-        {
-            g.setColour (AppTheme::border().withAlpha (0.65f));
-            g.drawVerticalLine (cell.getX() - 6, (float) cell.getY() + 18.0f, (float) cell.getBottom() - 12.0f);
-        }
+        auto box = juce::Rectangle<int> (grid.getX() + i * (w + gap), grid.getY(), w, grid.getHeight());
+        drawKnob (g, box, knobs[(size_t) i]);
     }
 }
 
 void MixerPanelComponent::resized() {}
 
-void MixerPanelComponent::drawKnob (juce::Graphics& g, juce::Rectangle<int> area, const KnobItem& item)
+void MixerPanelComponent::drawKnob (juce::Graphics& g, juce::Rectangle<int> area, const KnobItem& k)
 {
-    auto label = area.removeFromTop (24);
-    g.setColour (item.colour);
-    g.setFont (juce::Font (11.5f, juce::Font::bold));
-    g.drawText (item.name, label, juce::Justification::centred);
+    auto top = area.removeFromTop (70);
+    auto knob = top.withSizeKeepingCentre (54, 54).toFloat();
 
-    const int knobSize = juce::jmin (62, juce::jmin (area.getWidth(), area.getHeight() - 26));
-    auto k = juce::Rectangle<int> (0, 0, knobSize, knobSize).withCentre (area.getCentre()).translated (0, -8);
-    auto bounds = k.toFloat();
-
-    g.setColour (juce::Colours::black.withAlpha (0.35f));
-    g.fillEllipse (bounds.expanded (4.0f));
-
-    g.setColour (juce::Colour::fromRGB (20, 26, 34));
-    g.fillEllipse (bounds);
+    g.setColour (AppTheme::panelDark());
+    g.fillEllipse (knob);
     g.setColour (AppTheme::border());
-    g.drawEllipse (bounds, 2.0f);
-
-    const float start = juce::MathConstants<float>::pi * 0.78f;
-    const float end   = juce::MathConstants<float>::pi * 2.22f;
-    const float pos   = start + (end - start) * ((float) item.value / 100.0f);
+    g.drawEllipse (knob, 2.0f);
 
     juce::Path arc;
-    arc.addCentredArc (bounds.getCentreX(), bounds.getCentreY(), knobSize * 0.44f, knobSize * 0.44f, 0.0f, start, pos, true);
-    g.setColour (item.colour);
-    g.strokePath (arc, juce::PathStrokeType (4.0f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+    arc.addCentredArc (knob.getCentreX(), knob.getCentreY(), 26.0f, 26.0f, 0.0f,
+                       juce::degreesToRadians (135.0f),
+                       juce::degreesToRadians (135.0f + 270.0f * k.pos), true);
+    g.setColour (k.colour);
+    g.strokePath (arc, juce::PathStrokeType (3.2f));
 
-    juce::Point<float> p1 (bounds.getCentreX(), bounds.getCentreY());
-    juce::Point<float> p2 (bounds.getCentreX() + std::cos (pos - juce::MathConstants<float>::halfPi) * knobSize * 0.28f,
-                           bounds.getCentreY() + std::sin (pos - juce::MathConstants<float>::halfPi) * knobSize * 0.28f);
-    g.setColour (AppTheme::text());
-    g.drawLine ({ p1, p2 }, 2.0f);
+    const float angle = juce::degreesToRadians (135.0f + 270.0f * k.pos);
+    const float px = knob.getCentreX() + std::cos (angle) * 17.0f;
+    const float py = knob.getCentreY() + std::sin (angle) * 17.0f;
+    g.fillEllipse (px - 2.0f, py - 2.0f, 4.0f, 4.0f);
 
     g.setColour (AppTheme::text());
-    g.setFont (juce::Font (12.0f));
-    g.drawText (juce::String (item.value) + "%", area.removeFromBottom (22), juce::Justification::centred);
+    g.setFont (juce::Font (11.0f, juce::Font::bold));
+    g.drawText (k.value, knob.toNearestInt(), juce::Justification::centred);
+
+    g.setColour (AppTheme::subText());
+    g.setFont (juce::Font (10.0f));
+    g.drawText (k.label, area.removeFromTop (18), juce::Justification::centred);
 }

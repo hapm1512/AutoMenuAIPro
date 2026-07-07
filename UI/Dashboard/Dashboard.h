@@ -5,13 +5,14 @@
 #include "../Panels/MacroPanel/MacroPanelComponent.h"
 #include "../Panels/MixerPanel/MixerPanelComponent.h"
 #include "../Panels/TonePanel/ToneDetectorComponent.h"
-#include "../Panels/OutputMeterPanel/OutputMeterComponent.h"
 #include "../Footer/FooterComponent.h"
+#include "../Settings/SettingsPanel.h"
 
 class Dashboard final : public juce::Component
 {
 public:
     Dashboard();
+
     void paint (juce::Graphics& g) override;
     void resized() override;
 
@@ -21,5 +22,17 @@ private:
     MixerPanelComponent mixerPanel;
     ToneDetectorComponent toneDetector;
     FooterComponent footer;
-    OutputMeterComponent outputMeter;
+    SettingsPanel settingsPanel;
+
+    bool settingsVisible = false;
+
+    juce::Rectangle<int> headerArea;
+    juce::Rectangle<int> macroArea;
+    juce::Rectangle<int> mixerArea;
+    juce::Rectangle<int> statusArea;
+    juce::Rectangle<int> toneArea;
+    juce::Rectangle<int> settingsArea;
+
+    void toggleSettings();
+    void showSettings (bool shouldShow);
 };

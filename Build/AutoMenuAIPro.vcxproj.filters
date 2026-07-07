@@ -16,6 +16,9 @@
     <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Theme\AppTheme.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Settings\SettingsPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="D:\Projects\AutoMenuAIPro\UI\Header\HeaderComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
