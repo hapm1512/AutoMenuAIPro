@@ -4,6 +4,7 @@
 #include "../Analysis/AnalysisManager.h"
 #include "../Cubase/CubaseManager.h"
 #include "MacroManager.h"
+#include "RealtimeAnalysisState.h"
 
 namespace AutoMenu
 {
@@ -25,6 +26,7 @@ namespace AutoMenu
         void triggerMacro (int macroIndex);
 
         AnalysisResult getAnalysisResult() const;
+        RealtimeAnalysisState getRealtimeAnalysisState() const;
 
         AudioEngine& getAudioEngine() noexcept { return audioEngine; }
         AnalysisManager& getAnalysisManager() noexcept { return analysisManager; }

@@ -102,7 +102,7 @@ void Dashboard::timerCallback()
 
 void Dashboard::updateToneDisplay()
 {
-    toneDetector.setAnalysisResult (core.getAnalysisResult());
+    toneDetector.setRealtimeState (core.getRealtimeAnalysisState());
 }
 
 void Dashboard::toggleSettings()

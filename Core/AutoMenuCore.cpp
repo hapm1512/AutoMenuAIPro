@@ -73,4 +73,9 @@ namespace AutoMenu
     {
         return analysisManager.getLatestResult();
     }
+
+    RealtimeAnalysisState AutoMenuCore::getRealtimeAnalysisState() const
+    {
+        return RealtimeAnalysisState::fromAnalysisResult (analysisManager.getLatestResult());
+    }
 }

@@ -1,12 +1,18 @@
 #include "ToneDetectorComponent.h"
 #include "../../Theme/AppTheme.h"
+#include <cmath>
 
 ToneDetectorComponent::ToneDetectorComponent() = default;
 
 void ToneDetectorComponent::setAnalysisResult (const AutoMenu::AnalysisResult& result)
 {
-    currentResult = result;
-    hasLiveResult = result.tone.valid;
+    setRealtimeState (AutoMenu::RealtimeAnalysisState::fromAnalysisResult (result));
+}
+
+void ToneDetectorComponent::setRealtimeState (const AutoMenu::RealtimeAnalysisState& state)
+{
+    currentState = state;
+    hasLiveResult = state.valid;
     repaint();
 }
 
@@ -15,7 +21,7 @@ juce::String ToneDetectorComponent::getToneText() const
     if (! hasLiveResult)
         return "--";
 
-    return currentResult.tone.keyName + " " + currentResult.tone.scaleName;
+    return currentState.getToneText();
 }
 
 juce::String ToneDetectorComponent::getScaleText() const
@@ -23,15 +29,12 @@ juce::String ToneDetectorComponent::getScaleText() const
     if (! hasLiveResult)
         return "Minor";
 
-    return currentResult.tone.scaleName;
+    return currentState.scaleName;
 }
 
 juce::String ToneDetectorComponent::getBpmText() const
 {
-    if (! hasLiveResult || currentResult.tone.bpm <= 1.0f)
-        return "--";
-
-    return juce::String ((int) std::round (currentResult.tone.bpm));
+    return currentState.getBpmText();
 }
 
 juce::String ToneDetectorComponent::getCamelotText() const
@@ -39,7 +42,7 @@ juce::String ToneDetectorComponent::getCamelotText() const
     if (! hasLiveResult)
         return "--";
 
-    return currentResult.tone.camelot;
+    return currentState.camelot;
 }
 
 float ToneDetectorComponent::getConfidence() const
@@ -47,7 +50,7 @@ float ToneDetectorComponent::getConfidence() const
     if (! hasLiveResult)
         return 0.0f;
 
-    return juce::jlimit (0.0f, 1.0f, currentResult.tone.confidence);
+    return juce::jlimit (0.0f, 1.0f, currentState.confidence);
 }
 
 void ToneDetectorComponent::paint (juce::Graphics& g)
