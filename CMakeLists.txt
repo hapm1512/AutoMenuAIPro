@@ -33,6 +33,7 @@ target_sources(AutoMenuAIPro PRIVATE
     Analysis/ToneStabilizer.cpp
 
     Cubase/MidiDeviceManager.cpp
+    Cubase/MidiCommandQueue.cpp
 
     UI/Dashboard/Dashboard.cpp
     UI/Theme/AppTheme.cpp
