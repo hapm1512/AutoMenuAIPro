@@ -11,8 +11,23 @@ void ToneDetectorComponent::setAnalysisResult (const AutoMenu::AnalysisResult& r
 
 void ToneDetectorComponent::setRealtimeState (const AutoMenu::RealtimeAnalysisState& state)
 {
+    AutoMenu::RealtimeToneState tone;
+    tone.keyName = state.keyName;
+    tone.scaleName = state.scaleName;
+    tone.camelot = state.camelot;
+    tone.confidence = state.confidence;
+    tone.pitchHz = state.pitchHz;
+    tone.stable = state.stable;
+    tone.valid = state.valid;
+    tone.signalPresent = state.signalPresent;
+    tone.detectedTime = state.timestampSeconds;
+    setRealtimeToneState (tone);
+}
+
+void ToneDetectorComponent::setRealtimeToneState (const AutoMenu::RealtimeToneState& state)
+{
     currentState = state;
-    hasLiveResult = state.valid;
+    hasLiveResult = state.valid && state.stable;
     repaint();
 }
 
@@ -29,12 +44,12 @@ juce::String ToneDetectorComponent::getScaleText() const
     if (! hasLiveResult)
         return "Minor";
 
-    return currentState.scaleName;
+    return currentState.getScaleText();
 }
 
 juce::String ToneDetectorComponent::getBpmText() const
 {
-    return currentState.getBpmText();
+    return "--";
 }
 
 juce::String ToneDetectorComponent::getCamelotText() const
@@ -47,7 +62,7 @@ juce::String ToneDetectorComponent::getCamelotText() const
 
 float ToneDetectorComponent::getConfidence() const
 {
-    if (! hasLiveResult)
+    if (! currentState.signalPresent)
         return 0.0f;
 
     return juce::jlimit (0.0f, 1.0f, currentState.confidence);
@@ -179,7 +194,7 @@ void ToneDetectorComponent::paint (juce::Graphics& g)
         auto info = top.removeFromTop (20);
         g.setColour (AppTheme::subText());
         g.setFont (juce::Font (9.5f));
-        g.drawText ("BPM " + getBpmText() + "     CAM " + getCamelotText(),
+        g.drawText ((currentState.stable ? "STABLE" : "LISTENING") + juce::String ("     CAM ") + getCamelotText(),
                     info, juce::Justification::centred);
     }
 }

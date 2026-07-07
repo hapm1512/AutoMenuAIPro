@@ -5,6 +5,7 @@
 #include "../Cubase/CubaseManager.h"
 #include "MacroManager.h"
 #include "RealtimeAnalysisState.h"
+#include "RealtimeToneState.h"
 
 namespace AutoMenu
 {
@@ -27,6 +28,7 @@ namespace AutoMenu
 
         AnalysisResult getAnalysisResult() const;
         RealtimeAnalysisState getRealtimeAnalysisState() const;
+        RealtimeToneState getRealtimeToneState() const;
 
         AudioEngine& getAudioEngine() noexcept { return audioEngine; }
         AnalysisManager& getAnalysisManager() noexcept { return analysisManager; }

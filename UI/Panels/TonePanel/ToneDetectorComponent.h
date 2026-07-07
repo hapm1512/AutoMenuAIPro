@@ -3,6 +3,7 @@
 #include <juce_gui_extra/juce_gui_extra.h>
 #include "../../../Core/AnalysisTypes.h"
 #include "../../../Core/RealtimeAnalysisState.h"
+#include "../../../Core/RealtimeToneState.h"
 
 class ToneDetectorComponent final : public juce::Component
 {
@@ -11,12 +12,13 @@ public:
 
     void setAnalysisResult (const AutoMenu::AnalysisResult& result);
     void setRealtimeState (const AutoMenu::RealtimeAnalysisState& state);
+    void setRealtimeToneState (const AutoMenu::RealtimeToneState& state);
 
     void paint (juce::Graphics& g) override;
     void resized() override;
 
 private:
-    AutoMenu::RealtimeAnalysisState currentState;
+    AutoMenu::RealtimeToneState currentState;
     bool hasLiveResult = false;
 
     juce::String getToneText() const;

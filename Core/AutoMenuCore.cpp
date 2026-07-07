@@ -76,6 +76,11 @@ namespace AutoMenu
 
     RealtimeAnalysisState AutoMenuCore::getRealtimeAnalysisState() const
     {
-        return RealtimeAnalysisState::fromAnalysisResult (analysisManager.getLatestResult());
+        return RealtimeAnalysisState::fromToneState (analysisManager.getLatestToneState());
+    }
+
+    RealtimeToneState AutoMenuCore::getRealtimeToneState() const
+    {
+        return analysisManager.getLatestToneState();
     }
 }

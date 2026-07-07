@@ -31,6 +31,7 @@ target_sources(AutoMenuAIPro PRIVATE
     Analysis/BPMDetector.cpp
     Analysis/NoiseGate.cpp
     Analysis/ToneStabilizer.cpp
+    Analysis/ToneEngine.cpp
 
     Core/MacroManager.cpp
     Core/AutomationEngine.cpp

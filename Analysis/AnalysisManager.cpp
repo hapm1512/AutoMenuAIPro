@@ -17,20 +17,21 @@ namespace AutoMenu
     void AnalysisManager::prepare (double sampleRateToUse, int blockSizeToUse)
     {
         const juce::ScopedLock sl (lock);
+
         sampleRate = sampleRateToUse > 0.0 ? sampleRateToUse : 48000.0;
         blockSize = juce::jmax (64, blockSizeToUse);
+
         pendingMono.setSize (1, FFTAnalyzer::fftSize * 4);
         pendingMono.clear();
         pendingWrite = 0;
         hasEnoughSamples = false;
         timestamp = 0.0;
-        chroma.fill (0.0f);
+
         latest = AnalysisResult{};
+        latestTone = RealtimeToneState{};
+
         fftAnalyzer.prepare (sampleRate);
-        bpmDetector.reset();
-        noiseGate.prepare (sampleRate);
-        toneStabilizer.reset();
-        analysisHopCounter = 0;
+        toneEngine.prepare (sampleRate);
     }
 
     void AnalysisManager::reset()
@@ -72,6 +73,12 @@ namespace AutoMenu
         return latest;
     }
 
+    RealtimeToneState AnalysisManager::getLatestToneState() const
+    {
+        const juce::ScopedLock sl (lock);
+        return latestTone;
+    }
+
     void AnalysisManager::timerCallback()
     {
         analyzePendingBuffer();
@@ -80,11 +87,11 @@ namespace AutoMenu
     void AnalysisManager::analyzePendingBuffer()
     {
         juce::AudioBuffer<float> snapshot;
-        double sr = 48000.0;
         double ts = 0.0;
 
         {
             const juce::ScopedLock sl (lock);
+
             if (! hasEnoughSamples && pendingWrite < FFTAnalyzer::fftSize)
                 return;
 
@@ -100,50 +107,18 @@ namespace AutoMenu
             for (int i = 0; i < FFTAnalyzer::fftSize; ++i)
                 out[i] = src[(start + i) % capacity];
 
-            sr = sampleRate;
             ts = timestamp;
         }
 
-        noiseGate.processMonoBlock (snapshot);
-        const bool hasSignal = noiseGate.hasSignal();
-
-        auto spectrum = fftAnalyzer.analyze (snapshot.getReadPointer (0), snapshot.getNumSamples());
-        auto pitch = pitchDetector.detect (snapshot.getReadPointer (0), snapshot.getNumSamples(), sr);
-        const float bpm = bpmDetector.processBlock (snapshot.getReadPointer (0), snapshot.getNumSamples(), sr);
-
-        ToneResult rawTone;
-        if (hasSignal && pitch.valid)
-        {
-            updateChromaFromPitch (pitch.hz, pitch.confidence);
-            rawTone = keyDetector.detectFromChroma (chroma, bpm);
-            rawTone.pitchHz = pitch.hz;
-
-            if (! rawTone.valid || rawTone.confidence < 0.10f)
-                rawTone = keyDetector.detectFromPitch (pitch.hz, pitch.confidence, bpm);
-        }
-
-        auto tone = toneStabilizer.process (rawTone, hasSignal);
-
-        AnalysisResult result;
-        result.spectrum = spectrum;
-        result.tone = tone;
+        auto spectrumSnapshot = snapshot;
+        auto result = toneEngine.processBlock (snapshot, ts);
+        result.spectrum = fftAnalyzer.analyze (spectrumSnapshot.getReadPointer (0), spectrumSnapshot.getNumSamples());
         result.timestampSeconds = ts;
+
+        const auto toneState = toneEngine.getToneState();
 
         const juce::ScopedLock sl (lock);
         latest = result;
-    }
-
-    void AnalysisManager::updateChromaFromPitch (float hz, float amount)
-    {
-        if (hz <= 0.0f)
-            return;
-
-        const int midi = (int) std::round (69.0 + 12.0 * std::log2 ((double) hz / 440.0));
-        const int pc = ((midi % 12) + 12) % 12;
-
-        for (auto& v : chroma)
-            v *= 0.988f;
-
-        chroma[(size_t) pc] += juce::jlimit (0.0f, 1.0f, amount);
+        latestTone = toneState;
     }
 }
