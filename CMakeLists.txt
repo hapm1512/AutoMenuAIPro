@@ -32,6 +32,7 @@ target_sources(VocalSuiteUltraPro
 PRIVATE
     Source/PluginProcessor.cpp
     Source/PluginEditor.cpp
+    Source/PluginEntry.cpp
 
     Source/Parameters/ParameterLayout.cpp
     Source/Core/PluginState.cpp

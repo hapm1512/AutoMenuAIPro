@@ -1,5 +1,7 @@
 #pragma once
 #include "DspModuleBase.h"
+#include <array>
+#include <vector>
 
 class DeEsserModule final : public DspModuleBase
 {
@@ -11,7 +13,26 @@ public:
                   juce::AudioProcessorValueTreeState& apvts) override;
 
 private:
-    float splitLp[2] {};
-    float env[2] {};
-    float reductionGain[2] { 1.0f, 1.0f };
+    struct ChannelState
+    {
+        float sideHp = 0.0f;
+        float sideLp = 0.0f;
+        float splitLp = 0.0f;
+        float peakEnv = 0.0f;
+        float rmsEnv = 0.0f;
+        float noiseFloor = 0.0001f;
+        float gain = 1.0f;
+        float holdSamples = 0.0f;
+        std::vector<float> delay;
+        int delayWrite = 0;
+    };
+
+    std::array<ChannelState, 2> state;
+
+    int maxDelaySamples = 1;
+
+    static float softKneeOverDb (float inputDb, float thresholdDb, float kneeDb) noexcept;
+    static float safeMix (float value) noexcept;
+
+    void ensureDelaySize();
 };

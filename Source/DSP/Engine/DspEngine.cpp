@@ -47,7 +47,7 @@ void DspEngine::process (juce::AudioBuffer<float>& buffer,
 
     const auto out = buffer.getMagnitude (0, buffer.getNumSamples());
     outputPeak.store (juce::jlimit (0.0f, 1.0f, out));
-    gainReduction.store (compressor.getGainReduction());
+    gainReduction.store (juce::jmax (compressor.getGainReduction(), output.getLimiterGainReductionDb()));
 }
 
 float DspEngine::getInputPeak() const noexcept

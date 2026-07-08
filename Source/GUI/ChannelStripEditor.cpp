@@ -13,51 +13,60 @@ ChannelStripEditor::ChannelStripEditor (VocalSuiteUltraProAudioProcessor& p)
     addAndMakeVisible (popupValue);
     addAndMakeVisible (tooltipManager);
 
-    footer.setText ("VOCAL SUITE ULTRA PRO  |  COMMERCIAL GUI REWRITE SPRINT 10  |  GUI LOCKED  |  DSP NEXT", juce::dontSendNotification);
+    footer.setText ("VOCAL SUITE ULTRA PRO  |  EPIC 3G OUTPUT STAGE  |  DSP ACTIVE", juce::dontSendNotification);
     footer.setJustificationType (juce::Justification::centred);
     footer.setColour (juce::Label::textColourId, Theme::mutedText);
     footer.setFont (Theme::bold (13.5f));
     addAndMakeVisible (footer);
 
-    auto& pre = createModule ("PREAMP", "preampOn");
+    auto& pre = createModule ("ANALOG FRONT", "preampOn");
+    pre.addKnob ("TRIM", "preampInputTrim", Theme::textBright);
     pre.addKnob ("DRIVE", "preampDrive", Theme::red);
-    pre.addKnob ("TRIM", "preampOutput", Theme::textBright);
-    pre.addKnob ("HARM", "preampHarmonic", Theme::gold);
+    pre.addKnob ("IRON", "preampTransformer", Theme::gold);
+    pre.addKnob ("TUBE", "preampTube", Theme::purple);
+    pre.addKnob ("OUT", "preampOutput", Theme::blue);
 
-    auto& gate = createModule ("GATE", "gateOn");
-    gate.addKnob ("THRESHOLD", "gateThreshold", Theme::purple);
+    auto& gate = createModule ("PRO GATE", "gateOn");
+    gate.addKnob ("THRESH", "gateThreshold", Theme::purple);
     gate.addKnob ("RANGE", "gateRange", Theme::purple);
-    gate.addKnob ("ATTACK", "gateAttack", Theme::purple);
-    gate.addKnob ("RELEASE", "gateRelease", Theme::purple);
+    gate.addKnob ("LOOK", "gateLookAhead", Theme::blue);
+    gate.addKnob ("KNEE", "gateKnee", Theme::gold);
+    gate.addKnob ("REL", "gateRelease", Theme::purple);
 
-    auto& eq = createModule ("EQ", "eqOn");
-    eq.addKnob ("HIGH", "eqHigh", Theme::blue);
-    eq.addKnob ("MID", "eqMid", Theme::green);
-    eq.addKnob ("LOW", "eqLow", Theme::gold);
-    eq.addKnob ("AIR", "eqAir", Theme::purple);
+    auto& eq = createModule ("COMM EQ", "eqOn");
+    eq.addKnob ("HPF", "eqHpfFreq", Theme::textBright);
+    eq.addKnob ("LOW", "eqLowGain", Theme::gold);
+    eq.addKnob ("MID", "eqMidGain", Theme::green);
+    eq.addKnob ("HIGH", "eqHighGain", Theme::blue);
+    eq.addKnob ("AIR", "eqAirGain", Theme::purple);
 
-    auto& de = createModule ("DE-ESSER", "deesserOn");
+    auto& de = createModule ("PRO DE-ESS", "deesserOn");
     de.addKnob ("FREQ", "deessFreq", Theme::blue);
     de.addKnob ("THRESH", "deessThreshold", Theme::gold);
     de.addKnob ("RANGE", "deessRange", Theme::textBright);
-    de.addKnob ("RELEASE", "deessRelease", Theme::green);
+    de.addKnob ("FOCUS", "deessFocus", Theme::purple);
+    de.addKnob ("REL", "deessRelease", Theme::green);
 
-    auto& comp76 = createModule ("COMP 1176", "compressorOn");
-    comp76.addKnob ("RATIO", "compPeakReduction", Theme::blue);
+    auto& comp76 = createModule ("1176 FET", "compressorOn");
+    comp76.addKnob ("INPUT", "comp1176Amount", Theme::blue);
+    comp76.addKnob ("RATIO", "comp1176Ratio", Theme::purple);
     comp76.addKnob ("ATTACK", "compAttack", Theme::gold);
     comp76.addKnob ("RELEASE", "compRelease", Theme::gold);
-    comp76.addKnob ("INPUT", "compInput", Theme::blue);
-    comp76.addKnob ("OUTPUT", "compOutput", Theme::blue);
+    comp76.addKnob ("SC HPF", "compSideHp", Theme::textBright);
 
-    auto& comp2a = createModule ("COMP LA-2A", "compressorOn");
-    comp2a.addKnob ("PEAK RED", "compPeakReduction", Theme::gold);
-    comp2a.addKnob ("GAIN", "compGain", Theme::blue);
-    comp2a.addKnob ("MIX", "compOutput", Theme::purple);
+    auto& comp2a = createModule ("LA-2A OPTO", "compressorOn");
+    comp2a.addKnob ("PEAK", "compLA2APeak", Theme::gold);
+    comp2a.addKnob ("GAIN", "compLA2AGain", Theme::blue);
+    comp2a.addKnob ("SPEED", "compLA2ASpeed", Theme::purple);
+    comp2a.addKnob ("MIX", "compParallel", Theme::green);
+    comp2a.addKnob ("ANALOG", "compAnalog", Theme::gold);
 
-    auto& sat = createModule ("SATURATION", "saturationOn");
+    auto& sat = createModule ("ANALOG COLOR", "saturationOn");
     sat.addKnob ("DRIVE", "satDrive", Theme::gold);
-    sat.addKnob ("TONE", "satTone", Theme::gold);
-    sat.addKnob ("MIX", "satMix", Theme::gold);
+    sat.addKnob ("TAPE", "satTape", Theme::gold);
+    sat.addKnob ("TUBE", "satTube", Theme::purple);
+    sat.addKnob ("AIR", "satAir", Theme::blue);
+    sat.addKnob ("MIX", "satMix", Theme::green);
 
     auto& hi = createModule ("HI-END", "hiendOn");
     hi.addKnob ("AIR", "hiWarm", Theme::blue);
@@ -65,15 +74,18 @@ ChannelStripEditor::ChannelStripEditor (VocalSuiteUltraProAudioProcessor& p)
     hi.addKnob ("BRIGHT", "hiGlue", Theme::blue);
     hi.addKnob ("WIDTH", "hiWidth", Theme::blue);
 
-    auto& lim = createModule ("LIMITER", "outputOn");
+    auto& lim = createModule ("TRUE PEAK", "outputOn");
     lim.addKnob ("THRESH", "outThreshold", Theme::textBright);
-    lim.addKnob ("CEILING", "outCeiling", Theme::textBright);
-    lim.addKnob ("LOOK", "deessLookahead", Theme::textBright);
-    lim.addKnob ("REL", "gateRelease", Theme::textBright);
+    lim.addKnob ("CEIL", "outCeiling", Theme::gold);
+    lim.addKnob ("SOFT", "outSoftClip", Theme::purple);
+    lim.addKnob ("ISP", "outISP", Theme::blue);
 
     auto& out = createModule ("OUTPUT", "outputOn");
-    out.addKnob ("OUT", "preampOutput", Theme::blue);
-    out.addKnob ("CEIL", "outCeiling", Theme::gold);
+    out.addKnob ("TRIM", "outTrim", Theme::blue);
+    out.addKnob ("LUFS", "outLufsComp", Theme::green);
+    out.addKnob ("DITH", "outDither", Theme::textBright);
+    out.addKnob ("REL", "outRelease", Theme::gold);
+    out.addKnob ("MIX", "outMix", Theme::purple);
 
     startTimerHz (30);
 }
