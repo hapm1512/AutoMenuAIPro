@@ -7,7 +7,8 @@ VocalSuiteUltraProAudioProcessor::VocalSuiteUltraProAudioProcessor()
         .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
         .withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
       apvts (*this, nullptr, "PARAMETERS", Parameters::createLayout()),
-      presetManager (apvts)
+      presetManager (apvts),
+      licenseManager()
 {
 }
 
@@ -48,6 +49,8 @@ void VocalSuiteUltraProAudioProcessor::getStateInformation (juce::MemoryBlock& d
 {
     auto state = apvts.copyState();
     state.setProperty ("presetName", presetManager.getCurrentPresetName(), nullptr);
+    state.setProperty ("licenseStatus", LicenseManager::statusToString (licenseManager.getStatus()), nullptr);
+    state.setProperty ("licenseText", licenseManager.getStatusText(), nullptr);
 
     if (auto xml = state.createXml())
         copyXmlToBinary (*xml, destData);

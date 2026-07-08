@@ -4,10 +4,10 @@
 namespace ReleaseInfo
 {
     inline constexpr const char* productName = "Vocal Suite Ultra Pro";
-    inline constexpr const char* companyName = "Hai Audio";
-    inline constexpr const char* version = "4.5.0-rc";
-    inline constexpr const char* milestone = "Epic 4F Release Candidate";
-    inline constexpr const char* tag = "v4.5-epic4f-release-candidate";
+    inline constexpr const char* companyName = "Hai Pham Audio";
+    inline constexpr const char* version = "5.5.0";
+    inline constexpr const char* milestone = "Epic 5F Commercial Release v1.0";
+    inline constexpr const char* tag = "v1.0-commercial-release";
 
     inline juce::String getFullVersionString()
     {

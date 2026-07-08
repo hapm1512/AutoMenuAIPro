@@ -41,7 +41,7 @@ ChannelStripEditor::ChannelStripEditor (VocalSuiteUltraProAudioProcessor& p)
     keyboard.onAB = topBar.onABSwap;
     keyboard.onTheme = topBar.onThemeToggle;
 
-    footer.setText ("VOCAL SUITE ULTRA PRO  |  EPIC 4D COMMERCIAL GUI  |  DSP ACTIVE", juce::dontSendNotification);
+    footer.setText ("VOCAL SUITE ULTRA PRO  |  EPIC 5D LICENSING  |  " + processor.getLicenseManager().getStatusText(), juce::dontSendNotification);
     footer.setJustificationType (juce::Justification::centred);
     footer.setColour (juce::Label::textColourId, Theme::mutedText);
     footer.setFont (Theme::bold (13.5f));
@@ -217,7 +217,7 @@ void ChannelStripEditor::resized()
 void ChannelStripEditor::timerCallback()
 {
     topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); topBar.setPresetCategory (processor.getPresetManager().getCurrentPresetCategory());
-    topBar.setStatusText ("Commercial GUI  •  HiDPI " + juce::String (scaleFactor, 2) + "x  •  Theme  •  Smooth Meters  •  HQ");
+    topBar.setStatusText (processor.getLicenseManager().getStatusText() + "  •  HiDPI " + juce::String (scaleFactor, 2) + "x  •  HQ");
 
     bottomMeters.setProfessionalMetering (processor.getInputPeak() * 2.2f,
                                           processor.getOutputPeak() * 2.2f,

@@ -1,0 +1,8 @@
+DAW,Version,OS,SampleRate,Buffer,VST3Scan,LoadPlugin,Presets,Automation,Bypass,SaveReload,CPU,Result,Notes
+Cubase,,Windows,44100,64,,,,,,,,,
+Cubase,,Windows,48000,128,,,,,,,,,
+Reaper,,Windows,44100,64,,,,,,,,,
+Reaper,,Windows,96000,256,,,,,,,,,
+Studio One,,Windows,48000,128,,,,,,,,,
+Ableton Live,,Windows,44100,128,,,,,,,,,
+FL Studio,,Windows,48000,256,,,,,,,,,

@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include "DSP/Engine/DspEngine.h"
 #include "Core/PresetManager.h"
+#include "Core/LicenseManager.h"
 
 class VocalSuiteUltraProAudioProcessor final : public juce::AudioProcessor
 {
@@ -48,9 +49,13 @@ public:
     PresetManager& getPresetManager() noexcept { return presetManager; }
     const PresetManager& getPresetManager() const noexcept { return presetManager; }
 
+    LicenseManager& getLicenseManager() noexcept { return licenseManager; }
+    const LicenseManager& getLicenseManager() const noexcept { return licenseManager; }
+
 private:
     DspEngine dsp;
     PresetManager presetManager;
+    LicenseManager licenseManager;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VocalSuiteUltraProAudioProcessor)
 };
