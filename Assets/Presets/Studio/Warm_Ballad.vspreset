@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Warm Ballad" category="Studio" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Warm smooth lead vocal for ballad and soft music." tags="warm, ballad, smooth"><Parameters><Parameter id="presetIndex" value="2" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

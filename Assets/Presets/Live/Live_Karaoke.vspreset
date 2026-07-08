@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Live Karaoke" category="Live" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Karaoke vocal chain with bright top and limiter safety." tags="live, karaoke, bright"><Parameters><Parameter id="presetIndex" value="12" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

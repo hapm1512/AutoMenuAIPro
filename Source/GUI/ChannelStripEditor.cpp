@@ -19,13 +19,15 @@ ChannelStripEditor::ChannelStripEditor (VocalSuiteUltraProAudioProcessor& p)
 
     auto& presets = processor.getPresetManager();
     topBar.setPresetName (presets.getCurrentPresetName());
-    topBar.onPreviousPreset = [this] { processor.getPresetManager().loadPreviousFactoryPreset(); topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
-    topBar.onNextPreset = [this] { processor.getPresetManager().loadNextFactoryPreset(); topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
+    topBar.setPresetCategory (presets.getCurrentPresetCategory());
+    topBar.onPreviousPreset = [this] { processor.getPresetManager().loadPreviousFactoryPreset(); topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); topBar.setPresetCategory (processor.getPresetManager().getCurrentPresetCategory()); };
+    topBar.onNextPreset = [this] { processor.getPresetManager().loadNextFactoryPreset(); topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); topBar.setPresetCategory (processor.getPresetManager().getCurrentPresetCategory()); };
     topBar.onSavePreset = [this] { processor.getPresetManager().saveUserPreset (processor.getPresetManager().getCurrentPresetName()); };
-    topBar.onABSwap = [this] { processor.getPresetManager().swapAB(); topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
+    topBar.onFavoritePreset = [this] (bool isFavorite) { processor.getPresetManager().setFavorite (processor.getPresetManager().getCurrentPresetName(), isFavorite); };
+    topBar.onABSwap = [this] { processor.getPresetManager().swapAB(); topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); topBar.setPresetCategory (processor.getPresetManager().getCurrentPresetCategory()); };
     topBar.onCopyAToB = [this] { processor.getPresetManager().copyAToB(); };
-    topBar.onUndo = [this] { if (processor.getPresetManager().undo()) topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
-    topBar.onRedo = [this] { if (processor.getPresetManager().redo()) topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
+    topBar.onUndo = [this] { if (processor.getPresetManager().undo()) topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); topBar.setPresetCategory (processor.getPresetManager().getCurrentPresetCategory()); };
+    topBar.onRedo = [this] { if (processor.getPresetManager().redo()) topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); topBar.setPresetCategory (processor.getPresetManager().getCurrentPresetCategory()); };
 
     topBar.onThemeToggle = [this]
     {
@@ -214,7 +216,7 @@ void ChannelStripEditor::resized()
 
 void ChannelStripEditor::timerCallback()
 {
-    topBar.setPresetName (processor.getPresetManager().getCurrentPresetName());
+    topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); topBar.setPresetCategory (processor.getPresetManager().getCurrentPresetCategory());
     topBar.setStatusText ("Commercial GUI  •  HiDPI " + juce::String (scaleFactor, 2) + "x  •  Theme  •  Smooth Meters  •  HQ");
 
     bottomMeters.setProfessionalMetering (processor.getInputPeak() * 2.2f,

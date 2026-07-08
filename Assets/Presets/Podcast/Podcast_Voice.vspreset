@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Podcast Voice" category="Podcast" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Clean spoken voice with controlled low end and consistent loudness." tags="podcast, speech, voice"><Parameters><Parameter id="presetIndex" value="16" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

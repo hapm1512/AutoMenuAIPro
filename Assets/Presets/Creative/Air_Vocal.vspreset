@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Air Vocal" category="Creative" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Extra air and sheen for glossy vocal effects." tags="creative, air, shine"><Parameters><Parameter id="presetIndex" value="22" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

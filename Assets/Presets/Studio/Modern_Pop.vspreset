@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Modern Pop" category="Studio" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Bright modern pop vocal with polished compression and air." tags="pop, bright, radio"><Parameters><Parameter id="presetIndex" value="1" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

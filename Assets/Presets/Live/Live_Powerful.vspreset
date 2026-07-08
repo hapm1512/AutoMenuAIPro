@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Live Powerful" category="Live" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Stronger live lead vocal with compression and presence." tags="live, power, lead"><Parameters><Parameter id="presetIndex" value="11" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

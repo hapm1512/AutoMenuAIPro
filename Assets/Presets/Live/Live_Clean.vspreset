@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Live Clean" category="Live" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Safe live vocal preset with natural noise control." tags="live, clean, stage"><Parameters><Parameter id="presetIndex" value="10" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

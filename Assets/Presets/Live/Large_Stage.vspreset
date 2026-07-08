@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Large Stage" category="Live" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Large stage preset with wider image and polished highs." tags="live, large stage, wide"><Parameters><Parameter id="presetIndex" value="15" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

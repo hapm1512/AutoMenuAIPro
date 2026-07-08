@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Broadcast FM" category="Broadcast" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Dense broadcast-style voice with strong level control." tags="broadcast, fm, voice"><Parameters><Parameter id="presetIndex" value="19" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Radio Voice" category="Creative" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Hyped radio voice with compression and saturation." tags="creative, radio, effect"><Parameters><Parameter id="presetIndex" value="24" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

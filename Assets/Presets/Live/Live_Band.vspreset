@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Live Band" category="Live" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Stage preset for band mix with tighter gate and mid focus." tags="live, band, stage"><Parameters><Parameter id="presetIndex" value="13" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

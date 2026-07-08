@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Bright Female" category="Studio" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Clear bright female vocal with controlled sibilance." tags="female, bright, air"><Parameters><Parameter id="presetIndex" value="3" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

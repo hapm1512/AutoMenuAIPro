@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Lo-Fi" category="Creative" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Lo-fi vocal color with darker top and stronger saturation." tags="creative, lo-fi, effect"><Parameters><Parameter id="presetIndex" value="25" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Soft Female" category="Studio" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Soft female vocal with controlled highs and smooth opto compression." tags="female, soft, smooth"><Parameters><Parameter id="presetIndex" value="7" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

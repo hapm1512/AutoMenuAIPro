@@ -58,6 +58,7 @@ TopBar::TopBar()
     undo.onClick = [this] { if (onUndo) onUndo(); };
     redo.onClick = [this] { if (onRedo) onRedo(); };
     theme.onClick = [this] { if (onThemeToggle) onThemeToggle(); };
+    favorite.onClick = [this] { if (onFavoritePreset) onFavoritePreset (favorite.getToggleState()); };
 }
 
 void TopBar::paint (juce::Graphics& g)
@@ -156,12 +157,18 @@ void TopBar::resized()
 
     favorite.setBounds (0, 0, 0, 0);
     save.setBounds (0, 0, 0, 0);
-    category.setBounds (0, 0, 0, 0);
+    category.setBounds (872, 18, 34, 34);
 }
 
 void TopBar::setPresetName (const juce::String& name)
 {
     preset.setText (name, juce::dontSendNotification);
+}
+
+void TopBar::setPresetCategory (const juce::String& name)
+{
+    category.setButtonText (name.substring (0, 3).toUpperCase());
+    category.setTooltip (name);
 }
 
 void TopBar::setStatusText (const juce::String& text)

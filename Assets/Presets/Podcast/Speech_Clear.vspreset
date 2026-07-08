@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Speech Clear" category="Podcast" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Clear speech preset focused on intelligibility." tags="speech, clear, dialog"><Parameters><Parameter id="presetIndex" value="17" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Rap Vocal" category="Studio" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Fast aggressive rap vocal with tight dynamics and presence." tags="rap, fast, aggressive"><Parameters><Parameter id="presetIndex" value="6" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

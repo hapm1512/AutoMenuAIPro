@@ -10,12 +10,14 @@ public:
     void resized() override;
 
     void setPresetName (const juce::String& name);
+    void setPresetCategory (const juce::String& name);
     void setStatusText (const juce::String& text);
     void setThemeIsLight (bool shouldUseLightTheme);
 
     std::function<void()> onPreviousPreset;
     std::function<void()> onNextPreset;
     std::function<void()> onSavePreset;
+    std::function<void(bool)> onFavoritePreset;
     std::function<void()> onABSwap;
     std::function<void()> onCopyAToB;
     std::function<void()> onUndo;

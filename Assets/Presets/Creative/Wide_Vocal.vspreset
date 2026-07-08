@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Wide Vocal" category="Creative" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Wider vocal image while keeping lead energy centered." tags="creative, wide, stereo"><Parameters><Parameter id="presetIndex" value="23" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

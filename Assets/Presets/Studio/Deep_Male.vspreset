@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Deep Male" category="Studio" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Deep male vocal with low-end cleanup and warm density." tags="male, deep, warm"><Parameters><Parameter id="presetIndex" value="8" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

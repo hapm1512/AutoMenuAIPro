@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Male Rock" category="Studio" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Forward male rock vocal with grit and stable level." tags="male, rock, grit"><Parameters><Parameter id="presetIndex" value="4" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

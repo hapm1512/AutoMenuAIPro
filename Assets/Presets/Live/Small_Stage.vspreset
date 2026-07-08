@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Small Stage" category="Live" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Compact stage preset with feedback-safe tone shaping." tags="live, small stage, safe"><Parameters><Parameter id="presetIndex" value="14" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>

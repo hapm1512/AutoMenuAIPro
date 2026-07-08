@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VocalSuiteFactoryPreset name="Narration" category="Podcast" author="Hai Pham Audio" version="1.0" pluginVersion="4.5.0" description="Warm narration preset for long-form spoken content." tags="narration, speech, warm"><Parameters><Parameter id="presetIndex" value="18" /><Parameter id="factoryPreset" value="1" /></Parameters></VocalSuiteFactoryPreset>
