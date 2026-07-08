@@ -6,6 +6,7 @@
 #include "GUI/Controls/PopupValue.h"
 #include "GUI/Controls/TooltipManager.h"
 #include "GUI/LookAndFeel/MainLookAndFeel.h"
+#include "GUI/Controls/KeyboardCommandHub.h"
 
 class VocalSuiteUltraProAudioProcessor;
 
@@ -18,6 +19,7 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    bool keyPressed (const juce::KeyPress&) override;
 
 private:
     VocalSuiteUltraProAudioProcessor& processor;
@@ -28,9 +30,13 @@ private:
     TooltipManager tooltipManager;
     MainLookAndFeel mainLookAndFeel;
     juce::Label footer;
+    KeyboardCommandHub keyboard;
+    float scaleFactor { 1.0f };
+    bool lightTheme { false };
 
     juce::OwnedArray<ModulePanel> modules;
 
     ModulePanel& createModule (const juce::String& name, const juce::String& onParam);
     void timerCallback() override;
+    void updateTheme();
 };

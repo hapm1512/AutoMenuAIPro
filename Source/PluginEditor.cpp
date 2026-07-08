@@ -7,6 +7,7 @@ VocalSuiteUltraProAudioProcessorEditor::VocalSuiteUltraProAudioProcessorEditor
 {
     addAndMakeVisible (editor);
     setResizable (true, true);
+    setWantsKeyboardFocus (true);
     setResizeLimits (1180, 720, 1720, 980);
     setSize (1540, 900);
 }
@@ -14,4 +15,10 @@ VocalSuiteUltraProAudioProcessorEditor::VocalSuiteUltraProAudioProcessorEditor
 void VocalSuiteUltraProAudioProcessorEditor::resized()
 {
     editor.setBounds (getLocalBounds());
+}
+
+
+bool VocalSuiteUltraProAudioProcessorEditor::keyPressed (const juce::KeyPress& key)
+{
+    return editor.keyPressed (key);
 }

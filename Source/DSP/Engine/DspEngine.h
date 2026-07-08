@@ -9,6 +9,8 @@
 #include "SaturationModule.h"
 #include "HiEndModule.h"
 #include "OutputModule.h"
+#include "DspUtilities.h"
+#include "ProfessionalMetering.h"
 
 class DspEngine final
 {
@@ -22,6 +24,13 @@ public:
     float getInputPeak() const noexcept;
     float getOutputPeak() const noexcept;
     float getGainReduction() const noexcept;
+    float getInputRms() const noexcept;
+    float getOutputRms() const noexcept;
+    float getTruePeak() const noexcept;
+    float getLufsMomentary() const noexcept;
+    float getLufsShortTerm() const noexcept;
+    float getLufsIntegrated() const noexcept;
+    float getStereoCorrelation() const noexcept;
 
 private:
     PreampModule preamp;
@@ -32,8 +41,16 @@ private:
     SaturationModule saturation;
     HiEndModule hiend;
     OutputModule output;
+    VocalDSP::ProfessionalMetering professionalMetering;
 
     std::atomic<float> inputPeak { 0.0f };
     std::atomic<float> outputPeak { 0.0f };
+    std::atomic<float> inputRms { 0.0f };
+    std::atomic<float> outputRms { 0.0f };
     std::atomic<float> gainReduction { 0.0f };
+    std::atomic<float> truePeak { 0.0f };
+    std::atomic<float> lufsMomentary { -70.0f };
+    std::atomic<float> lufsShortTerm { -70.0f };
+    std::atomic<float> lufsIntegrated { -70.0f };
+    std::atomic<float> stereoCorrelation { 1.0f };
 };

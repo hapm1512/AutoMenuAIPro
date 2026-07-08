@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(VocalSuiteUltraPro VERSION 0.1.0 LANGUAGES CXX)
+project(VocalSuiteUltraPro VERSION 4.5.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -36,6 +36,7 @@ PRIVATE
 
     Source/Parameters/ParameterLayout.cpp
     Source/Core/PluginState.cpp
+    Source/Core/PresetManager.cpp
 
     Source/GUI/Theme.cpp
     Source/GUI/ChannelStripEditor.cpp
@@ -49,6 +50,8 @@ PRIVATE
     Source/GUI/LookAndFeel/MainLookAndFeel.cpp
 
     Source/DSP/Engine/DspEngine.cpp
+    Source/DSP/DspUtilities.h
+    Source/DSP/ProfessionalMetering.h
     Source/DSP/PreampModule.cpp
     Source/DSP/EqModule.cpp
     Source/DSP/GateModule.cpp

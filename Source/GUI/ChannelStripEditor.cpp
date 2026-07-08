@@ -2,18 +2,44 @@
 #include "PluginProcessor.h"
 #include "GUI/Theme.h"
 #include "GUI/Layout/ChannelStripLayout.h"
+#include "GUI/ThemeManager.h"
+#include "GUI/Controls/GuiPerformance.h"
 
 ChannelStripEditor::ChannelStripEditor (VocalSuiteUltraProAudioProcessor& p)
     : processor (p)
 {
     setLookAndFeel (&mainLookAndFeel);
+    setWantsKeyboardFocus (true);
+    GuiPerformance::enableBufferedPainting (*this);
 
     addAndMakeVisible (topBar);
     addAndMakeVisible (bottomMeters);
     addAndMakeVisible (popupValue);
     addAndMakeVisible (tooltipManager);
 
-    footer.setText ("VOCAL SUITE ULTRA PRO  |  EPIC 3G OUTPUT STAGE  |  DSP ACTIVE", juce::dontSendNotification);
+    auto& presets = processor.getPresetManager();
+    topBar.setPresetName (presets.getCurrentPresetName());
+    topBar.onPreviousPreset = [this] { processor.getPresetManager().loadPreviousFactoryPreset(); topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
+    topBar.onNextPreset = [this] { processor.getPresetManager().loadNextFactoryPreset(); topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
+    topBar.onSavePreset = [this] { processor.getPresetManager().saveUserPreset (processor.getPresetManager().getCurrentPresetName()); };
+    topBar.onABSwap = [this] { processor.getPresetManager().swapAB(); topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
+    topBar.onCopyAToB = [this] { processor.getPresetManager().copyAToB(); };
+    topBar.onUndo = [this] { if (processor.getPresetManager().undo()) topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
+    topBar.onRedo = [this] { if (processor.getPresetManager().redo()) topBar.setPresetName (processor.getPresetManager().getCurrentPresetName()); };
+
+    topBar.onThemeToggle = [this]
+    {
+        lightTheme = ! lightTheme;
+        ThemeManager::get().setMode (lightTheme ? ThemeManager::Mode::light : ThemeManager::Mode::dark);
+        updateTheme();
+    };
+
+    keyboard.onUndo = topBar.onUndo;
+    keyboard.onRedo = topBar.onRedo;
+    keyboard.onAB = topBar.onABSwap;
+    keyboard.onTheme = topBar.onThemeToggle;
+
+    footer.setText ("VOCAL SUITE ULTRA PRO  |  EPIC 4D COMMERCIAL GUI  |  DSP ACTIVE", juce::dontSendNotification);
     footer.setJustificationType (juce::Justification::centred);
     footer.setColour (juce::Label::textColourId, Theme::mutedText);
     footer.setFont (Theme::bold (13.5f));
@@ -87,6 +113,7 @@ ChannelStripEditor::ChannelStripEditor (VocalSuiteUltraProAudioProcessor& p)
     out.addKnob ("REL", "outRelease", Theme::gold);
     out.addKnob ("MIX", "outMix", Theme::purple);
 
+    updateTheme();
     startTimerHz (30);
 }
 
@@ -102,8 +129,8 @@ void ChannelStripEditor::paint (juce::Graphics& g)
 {
     auto r = getLocalBounds().toFloat();
 
-    juce::ColourGradient bg (Theme::bgTop, 0, 0,
-                             Theme::bgBottom, 0, (float) getHeight(), false);
+    juce::ColourGradient bg (ThemeManager::get().backgroundTop(), 0, 0,
+                             ThemeManager::get().backgroundBottom(), 0, (float) getHeight(), false);
     bg.addColour (0.28, Theme::bgMid);
     bg.addColour (0.70, juce::Colour (0xff07090a));
     g.setGradientFill (bg);
@@ -164,6 +191,7 @@ void ChannelStripEditor::paint (juce::Graphics& g)
 
 void ChannelStripEditor::resized()
 {
+    scaleFactor = GuiPerformance::getScaleFactorFor (*this);
     auto layout = ChannelStripLayout::calculate (getLocalBounds());
 
     topBar.setBounds (layout.topBar);
@@ -186,7 +214,35 @@ void ChannelStripEditor::resized()
 
 void ChannelStripEditor::timerCallback()
 {
-    bottomMeters.setLevels (processor.getInputPeak() * 2.2f,
-                            processor.getOutputPeak() * 2.2f,
-                            processor.getGainReduction());
+    topBar.setPresetName (processor.getPresetManager().getCurrentPresetName());
+    topBar.setStatusText ("Commercial GUI  •  HiDPI " + juce::String (scaleFactor, 2) + "x  •  Theme  •  Smooth Meters  •  HQ");
+
+    bottomMeters.setProfessionalMetering (processor.getInputPeak() * 2.2f,
+                                          processor.getOutputPeak() * 2.2f,
+                                          processor.getInputRms() * 2.2f,
+                                          processor.getOutputRms() * 2.2f,
+                                          processor.getTruePeak(),
+                                          processor.getGainReduction(),
+                                          processor.getLufsIntegrated(),
+                                          processor.getLufsShortTerm(),
+                                          processor.getLufsMomentary(),
+                                          processor.getStereoCorrelation());
+}
+
+
+bool ChannelStripEditor::keyPressed (const juce::KeyPress& key)
+{
+    return keyboard.handleKeyPress (key);
+}
+
+void ChannelStripEditor::updateTheme()
+{
+    const auto& tm = ThemeManager::get();
+    footer.setColour (juce::Label::textColourId, tm.mutedText());
+    topBar.setThemeIsLight (tm.isLight());
+
+    for (auto* module : modules)
+        module->setThemeIsLight (tm.isLight());
+
+    repaint();
 }

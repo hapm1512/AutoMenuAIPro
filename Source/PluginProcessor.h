@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "DSP/Engine/DspEngine.h"
+#include "Core/PresetManager.h"
 
 class VocalSuiteUltraProAudioProcessor final : public juce::AudioProcessor
 {
@@ -36,9 +37,20 @@ public:
     float getInputPeak() const noexcept;
     float getOutputPeak() const noexcept;
     float getGainReduction() const noexcept;
+    float getInputRms() const noexcept;
+    float getOutputRms() const noexcept;
+    float getTruePeak() const noexcept;
+    float getLufsMomentary() const noexcept;
+    float getLufsShortTerm() const noexcept;
+    float getLufsIntegrated() const noexcept;
+    float getStereoCorrelation() const noexcept;
+
+    PresetManager& getPresetManager() noexcept { return presetManager; }
+    const PresetManager& getPresetManager() const noexcept { return presetManager; }
 
 private:
     DspEngine dsp;
+    PresetManager presetManager;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VocalSuiteUltraProAudioProcessor)
 };

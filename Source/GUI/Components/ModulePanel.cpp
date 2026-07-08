@@ -119,3 +119,12 @@ void ModulePanel::resized()
     for (auto* k : knobs)
         k->setBounds (body.removeFromTop (knobH).reduced (0, 1));
 }
+
+
+void ModulePanel::setThemeIsLight (bool shouldUseLightTheme)
+{
+    lightTheme = shouldUseLightTheme;
+    onButton.setColour (juce::TextButton::buttonColourId, lightTheme ? juce::Colour (0xffded8c8) : juce::Colour (0xff121212));
+    bypassButton.setColour (juce::TextButton::buttonColourId, lightTheme ? juce::Colour (0xffded8c8) : juce::Colour (0xff121212));
+    repaint();
+}

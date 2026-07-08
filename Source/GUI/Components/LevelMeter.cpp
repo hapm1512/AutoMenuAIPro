@@ -3,9 +3,15 @@
 
 void LevelMeter::setLevel (float value)
 {
-    level = juce::jlimit (0.0f, 1.0f, value);
+    setLevels (value, value * 0.72f);
+}
+
+void LevelMeter::setLevels (float peakValue, float rmsValue)
+{
+    level = juce::jlimit (0.0f, 1.0f, peakValue);
+    rmsLevel = juce::jlimit (0.0f, 1.0f, rmsValue);
     peakHold = juce::jmax (level, peakHold * 0.974f);
-    rmsGhost = rmsGhost * 0.92f + level * 0.08f;
+    rmsGhost = rmsGhost * 0.90f + rmsLevel * 0.10f;
 
     if (level > 0.96f)
         clipHold = 1.0f;

@@ -6,7 +6,8 @@ VocalSuiteUltraProAudioProcessor::VocalSuiteUltraProAudioProcessor()
     : AudioProcessor (BusesProperties()
         .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
         .withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
-      apvts (*this, nullptr, "PARAMETERS", Parameters::createLayout())
+      apvts (*this, nullptr, "PARAMETERS", Parameters::createLayout()),
+      presetManager (apvts)
 {
 }
 
@@ -45,7 +46,10 @@ juce::AudioProcessorEditor* VocalSuiteUltraProAudioProcessor::createEditor()
 
 void VocalSuiteUltraProAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    if (auto xml = apvts.copyState().createXml())
+    auto state = apvts.copyState();
+    state.setProperty ("presetName", presetManager.getCurrentPresetName(), nullptr);
+
+    if (auto xml = state.createXml())
         copyXmlToBinary (*xml, destData);
 }
 
@@ -68,6 +72,41 @@ float VocalSuiteUltraProAudioProcessor::getOutputPeak() const noexcept
 float VocalSuiteUltraProAudioProcessor::getGainReduction() const noexcept
 {
     return dsp.getGainReduction();
+}
+
+float VocalSuiteUltraProAudioProcessor::getInputRms() const noexcept
+{
+    return dsp.getInputRms();
+}
+
+float VocalSuiteUltraProAudioProcessor::getOutputRms() const noexcept
+{
+    return dsp.getOutputRms();
+}
+
+float VocalSuiteUltraProAudioProcessor::getTruePeak() const noexcept
+{
+    return dsp.getTruePeak();
+}
+
+float VocalSuiteUltraProAudioProcessor::getLufsMomentary() const noexcept
+{
+    return dsp.getLufsMomentary();
+}
+
+float VocalSuiteUltraProAudioProcessor::getLufsShortTerm() const noexcept
+{
+    return dsp.getLufsShortTerm();
+}
+
+float VocalSuiteUltraProAudioProcessor::getLufsIntegrated() const noexcept
+{
+    return dsp.getLufsIntegrated();
+}
+
+float VocalSuiteUltraProAudioProcessor::getStereoCorrelation() const noexcept
+{
+    return dsp.getStereoCorrelation();
 }
 
 juce::AudioProcessor* createPluginFilter()

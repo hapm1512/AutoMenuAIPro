@@ -15,10 +15,12 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    void setThemeIsLight (bool shouldUseLightTheme);
 
 private:
     juce::AudioProcessorValueTreeState& apvts;
     juce::String titleText;
+    bool lightTheme { false };
 
     juce::TextButton onButton { "ON" };
     juce::TextButton bypassButton { "BYPASS" };

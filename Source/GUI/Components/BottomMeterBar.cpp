@@ -46,15 +46,54 @@ BottomMeterBar::BottomMeterBar()
     addAndMakeVisible (grMeter);
 }
 
+juce::String BottomMeterBar::dbText (float amp)
+{
+    const float db = juce::Decibels::gainToDecibels (juce::jmax (amp, 1.0e-9f), -90.0f);
+    return juce::String (db, 1);
+}
+
+juce::String BottomMeterBar::lufsText (float value)
+{
+    if (value <= -69.0f)
+        return "-inf";
+    return juce::String (value, 1);
+}
+
 void BottomMeterBar::setLevels (float input, float output, float gr)
 {
-    inputLevel = juce::jlimit (0.0f, 1.0f, input);
-    outputLevel = juce::jlimit (0.0f, 1.0f, output);
-    grLevel = juce::jlimit (0.0f, 1.0f, gr);
+    setProfessionalMetering (input, output, input * 0.72f, output * 0.72f,
+                             output, gr, -70.0f, -70.0f, -70.0f, 1.0f);
+}
 
-    inputMeter.setLevel (inputLevel);
-    outputMeter.setLevel (outputLevel);
+void BottomMeterBar::setProfessionalMetering (float inputPeak, float outputPeak,
+                                              float inputRms, float outputRms,
+                                              float truePeak,
+                                              float gainReductionDb,
+                                              float lufsIntegrated,
+                                              float lufsShortTerm,
+                                              float lufsMomentary,
+                                              float correlation)
+{
+    inputLevel = juce::jlimit (0.0f, 1.0f, inputPeak);
+    outputLevel = juce::jlimit (0.0f, 1.0f, outputPeak);
+    inputRmsLevel = juce::jlimit (0.0f, 1.0f, inputRms);
+    outputRmsLevel = juce::jlimit (0.0f, 1.0f, outputRms);
+    truePeakLevel = juce::jlimit (0.0f, 1.0f, truePeak);
+    grLevel = juce::jlimit (0.0f, 1.0f, gainReductionDb / 24.0f);
+    correlationValue = juce::jlimit (-1.0f, 1.0f, correlation);
+    lufsI = lufsIntegrated;
+    lufsS = lufsShortTerm;
+    lufsM = lufsMomentary;
+
+    inputMeter.setLevels (inputLevel, inputRmsLevel);
+    outputMeter.setLevels (outputLevel, outputRmsLevel);
     grMeter.setLevel (grLevel);
+
+    lufsLabel.setText ("LUFS-I\n" + lufsText (lufsI), juce::dontSendNotification);
+    lufsShortLabel.setText ("LUFS-S\n" + lufsText (lufsS), juce::dontSendNotification);
+    momentaryLabel.setText ("MOM\n" + lufsText (lufsM), juce::dontSendNotification);
+    peakLabel.setText ("TRUE PEAK\n" + dbText (truePeakLevel), juce::dontSendNotification);
+    corrLabel.setText ("CORRELATION\n" + juce::String (correlationValue, 2), juce::dontSendNotification);
 
     clipInLabel.setAlpha (inputLevel > 0.96f ? 1.0f : 0.18f);
     clipOutLabel.setAlpha (outputLevel > 0.96f ? 1.0f : 0.18f);
@@ -94,12 +133,15 @@ void BottomMeterBar::paint (juce::Graphics& g)
     g.setColour (juce::Colour (0xff071012));
     g.fillRoundedRectangle (corr, 2.0f);
 
-    g.setColour (Theme::red.withAlpha (0.42f));
-    g.fillRoundedRectangle (corr.removeFromLeft (corr.getWidth() * 0.21f), 2.0f);
+    auto corrBg = corr;
+    const float zeroX = corrBg.getCentreX();
+    const float valueX = corrBg.getX() + juce::jmap (correlationValue, -1.0f, 1.0f, 0.0f, corrBg.getWidth());
 
-    auto corr2 = juce::Rectangle<float> (1150.0f, 82.0f, 155.0f, 9.0f);
-    g.setColour (Theme::blue.withAlpha (0.80f));
-    g.fillRoundedRectangle (corr2.withTrimmedLeft (corr2.getWidth() * 0.21f).withWidth (corr2.getWidth() * 0.57f), 2.0f);
+    g.setColour (correlationValue < 0.0f ? Theme::red.withAlpha (0.70f) : Theme::blue.withAlpha (0.80f));
+    if (valueX >= zeroX)
+        g.fillRoundedRectangle (juce::Rectangle<float> (zeroX, corrBg.getY(), valueX - zeroX, corrBg.getHeight()), 2.0f);
+    else
+        g.fillRoundedRectangle (juce::Rectangle<float> (valueX, corrBg.getY(), zeroX - valueX, corrBg.getHeight()), 2.0f);
 
     g.setColour (Theme::textBright.withAlpha (0.72f));
     g.drawVerticalLine (1150 + 77, 78.0f, 96.0f);

@@ -10,6 +10,7 @@ public:
     ~VocalSuiteUltraProAudioProcessorEditor() override = default;
 
     void resized() override;
+    bool keyPressed (const juce::KeyPress&) override;
 
 private:
     ChannelStripEditor editor;

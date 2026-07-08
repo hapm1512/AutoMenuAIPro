@@ -21,7 +21,7 @@ TopBar::TopBar()
     preset.setJustificationType (juce::Justification::centred);
     status.setJustificationType (juce::Justification::centredRight);
 
-    for (auto* x : { &prev, &next, &favorite, &save, &category, &a, &b, &copy, &undo, &redo, &settings, &help, &bypass })
+    for (auto* x : { &prev, &next, &favorite, &save, &category, &a, &b, &copy, &undo, &redo, &theme, &settings, &help, &bypass })
     {
         x->setColour (juce::TextButton::buttonColourId, juce::Colour (0xff111213));
         x->setColour (juce::TextButton::buttonOnColourId, Theme::gold);
@@ -35,6 +35,7 @@ TopBar::TopBar()
     favorite.setButtonText ("★");
     save.setButtonText ("SAVE");
     category.setButtonText ("VOCAL");
+    theme.setButtonText ("DARK");
     settings.setButtonText ("⚙");
     help.setButtonText ("?");
     bypass.setButtonText ("BYPASS");
@@ -48,6 +49,15 @@ TopBar::TopBar()
     bypass.setClickingTogglesState (true);
     bypass.setColour (juce::TextButton::buttonOnColourId, juce::Colour (0xff7c1e1e));
     bypass.setColour (juce::TextButton::textColourOnId, juce::Colours::white);
+
+    prev.onClick = [this] { if (onPreviousPreset) onPreviousPreset(); };
+    next.onClick = [this] { if (onNextPreset) onNextPreset(); };
+    save.onClick = [this] { if (onSavePreset) onSavePreset(); };
+    a.onClick = [this] { if (onABSwap) onABSwap(); };
+    copy.onClick = [this] { if (onCopyAToB) onCopyAToB(); };
+    undo.onClick = [this] { if (onUndo) onUndo(); };
+    redo.onClick = [this] { if (onRedo) onRedo(); };
+    theme.onClick = [this] { if (onThemeToggle) onThemeToggle(); };
 }
 
 void TopBar::paint (juce::Graphics& g)
@@ -139,11 +149,30 @@ void TopBar::resized()
 
     undo.setBounds (1216, 15, 50, 42);
     redo.setBounds (1268, 15, 50, 42);
-    settings.setBounds (1330, 15, 50, 42);
-    help.setBounds (1382, 15, 50, 42);
-    bypass.setBounds (1446, 15, 80, 42);
+    theme.setBounds (1324, 15, 70, 42);
+    settings.setBounds (1400, 15, 42, 42);
+    help.setBounds (1446, 15, 42, 42);
+    bypass.setBounds (1494, 15, 80, 42);
 
     favorite.setBounds (0, 0, 0, 0);
     save.setBounds (0, 0, 0, 0);
     category.setBounds (0, 0, 0, 0);
+}
+
+void TopBar::setPresetName (const juce::String& name)
+{
+    preset.setText (name, juce::dontSendNotification);
+}
+
+void TopBar::setStatusText (const juce::String& text)
+{
+    status.setText (text, juce::dontSendNotification);
+}
+
+
+void TopBar::setThemeIsLight (bool shouldUseLightTheme)
+{
+    lightTheme = shouldUseLightTheme;
+    theme.setButtonText (lightTheme ? "LIGHT" : "DARK");
+    repaint();
 }
